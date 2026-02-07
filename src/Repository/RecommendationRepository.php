@@ -20,4 +20,18 @@ class RecommendationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Recommendation::class);
     }
+
+    /**
+     * Finds recommendations matching the search term in content or associated report title.
+     */
+    public function findBySearch(string $query): array
+    {
+        return $this->createQueryBuilder('rec')
+            ->leftJoin('rec.report', 'r')
+            ->andWhere('rec.content LIKE :query OR r.title LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('rec.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

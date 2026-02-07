@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport d'Audit #{{ report.id }}</title>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #4e73df;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .title {
+            font-size: 24px;
+            color: #4e73df;
+            margin-bottom: 5px;
+        }
+        .meta {
+            font-size: 12px;
+            color: #666;
+        }
+        .section-title {
+            font-size: 18px;
+            color: #4e73df;
+            border-bottom: 1px solid #eee;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .details-table td {
+            padding: 8px;
+            border: 1px solid #eee;
+        }
+        .details-table td.label {
+            font-weight: bold;
+            background-color: #f8f9fc;
+            width: 30%;
+        }
+        .status-badge {
+            padding: 3px 10px;
+            border-radius: 15px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-valid { background-color: #1cc88a; }
+        .status-cours { background-color: #4e73df; }
+        .status-critique { background-color: #e74a3b; }
+        .status-other { background-color: #858796; }
+        
+        .recommendation-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f0f4fd;
+            border-left: 4px solid #4e73df;
+        }
+        .rec-date {
+            font-size: 10px;
+            color: #888;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">Rapport d'Audit AI</h1>
+        <div class="meta">Généré le {{ "now"|date("d/m/Y H:i") }}</div>
+    </div>
+
+    <h2 class="section-title">Informations Générales</h2>
+    <table class="details-table">
+        <tr>
+            <td class="label">Titre du Rapport</td>
+            <td>{{ report.title }}</td>
+        </tr>
+        <tr>
+            <td class="label">ID</td>
+            <td>#{{ report.id }}</td>
+        </tr>
+        <tr>
+            <td class="label">Type d'Audit</td>
+            <td>{{ report.type }}</td>
+        </tr>
+        <tr>
+            <td class="label">Statut</td>
+            <td>
+                {% set status_class = 'status-other' %}
+                {% if report.status == 'Validé' %}{% set status_class = 'status-valid' %}
+                {% elseif report.status == 'En cours' %}{% set status_class = 'status-cours' %}
+                {% elseif report.status == 'Critique' %}{% set status_class = 'status-critique' %}
+                {% endif %}
+                <span class="status-badge {{ status_class }}">{{ report.status }}</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Score Performance</td>
+            <td><strong>{{ report.score }}/100</strong></td>
+        </tr>
+        <tr>
+            <td class="label">Date de Création</td>
+            <td>{{ report.createdAt|date('d/m/Y H:i') }}</td>
+        </tr>
+    </table>
+
+    <h2 class="section-title">Description de l'Audit</h2>
+    <div style="background-color: #fff; padding: 10px; border: 1px solid #eee;">
+        {{ report.description|nl2br }}
+    </div>
+
+    {% if report.recommendations|length > 0 %}
+        <h2 class="section-title">Recommandations & Historique IA</h2>
+        {% for rec in report.recommendations %}
+            <div class="recommendation-item">
+                <span class="rec-date">{{ rec.createdAt|date('d/m/Y H:i') }}</span>
+                {{ rec.content|nl2br }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div style="margin-top: 50px; font-size: 10px; text-align: center; color: #aaa;">
+        Document confidentiel généré par la plateforme MindAudit AI.
+    </div>
+</body>
+</html>

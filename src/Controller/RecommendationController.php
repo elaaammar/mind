@@ -22,10 +22,18 @@ class RecommendationController extends AbstractController
     }
 
     #[Route('/recommendation', name: 'app_recommendation')]
-    public function index(RecommendationRepository $recommendationRepository): Response
+    public function index(Request $request, RecommendationRepository $recommendationRepository): Response
     {
+        $query = $request->query->get('q');
+        
+        if ($query) {
+            $recommendations = $recommendationRepository->findBySearch($query);
+        } else {
+            $recommendations = $recommendationRepository->findBy([], ['createdAt' => 'DESC']);
+        }
+
         return $this->render('recommendation/index.html.twig', [
-            'recommendations' => $recommendationRepository->findBy([], ['createdAt' => 'DESC']),
+            'recommendations' => $recommendations,
         ]);
     }
 

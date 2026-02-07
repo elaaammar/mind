@@ -16,13 +16,14 @@
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
-    <!-- Custom styles for this template-->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     {% endblock %}
 
 </head>
 
 <body id="page-top">
+    {% set current_route = app.request.attributes.get('_route') %}
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -33,7 +34,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('app_dashboard') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                    <i class="fas fa-robot"></i>
                 </div>
                 <div class="sidebar-brand-text mx-3">MindAudit AI </div>
             </a>
@@ -42,10 +43,10 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item {{ current_route == 'app_dashboard' ? 'active' : '' }}">
                 <a class="nav-link" href="{{ path('app_dashboard') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
+                    <span>Tableau de bord</span></a>
             </li>
 
             <!-- Heading -->
@@ -54,7 +55,7 @@
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
+            <li class="nav-item {{ current_route starts with 'app_report' ? 'active' : '' }}">
                 <a class="nav-link" href="{{ path('app_report_index') }}">
                     <i class="fas fa-fw fa-folder"></i>
                     <span>Rapports</span>
@@ -62,7 +63,7 @@
             </li>
 
             <!-- Nav Item - Recommendation -->
-            <li class="nav-item">
+            <li class="nav-item {{ current_route == 'app_recommendation' ? 'active' : '' }}">
                 <a class="nav-link" href="{{ path('app_recommendation') }}">
                     <i class="fas fa-fw fa-robot"></i>
                     <span>Recommandations</span>
@@ -95,10 +96,16 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <form action="{{ path('app_report_index') }}" method="get"
+                    {% set search_action = (current_route in ['app_recommendation', 'app_dashboard']) ? path(current_route) : path('app_report_index') %}
+                    {% set search_placeholder = 
+                        (current_route == 'app_recommendation') ? 'Rechercher des recommandations...' : 
+                        (current_route == 'app_dashboard' ? 'Rechercher dans les stats...' : 'Rechercher des rapports...') 
+                    %}
+                    
+                    <form action="{{ search_action }}" method="get"
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
-                            <input type="text" name="q" class="form-control bg-light border-0 small" placeholder="Rechercher des rapports..."
+                            <input type="text" name="q" class="form-control bg-light border-0 small" placeholder="{{ search_placeholder }}"
                                 aria-label="Search" aria-describedby="basic-addon2" value="{{ app.request.query.get('q') }}">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit">

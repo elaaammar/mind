@@ -6,6 +6,8 @@ use App\Entity\Report;
 use App\Form\ReportType;
 use App\Repository\ReportRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +16,43 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/report')]
 final class ReportController extends AbstractController
 {
+    #[Route('/{id}/pdf', name: 'app_report_pdf', methods: ['GET'])]
+    public function downloadPdf(Report $report): Response
+    {
+        // Configure Dompdf
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $pdfOptions->set('isRemoteEnabled', true);
+        
+        $dompdf = new Dompdf($pdfOptions);
+        
+        // Retrieve the HTML generated in our twig file
+        $html = $this->renderView('report/pdf.html.twig', [
+            'report' => $report
+        ]);
+        
+        // Load HTML to Dompdf
+        $dompdf->loadHtml($html);
+        
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'portrait');
+        
+        // Render the HTML as PDF
+        $dompdf->render();
+        
+        // Generate PDF content
+        $output = $dompdf->output();
+        
+        // Create a Response object
+        $response = new Response($output);
+        
+        // Set headers for PDF download
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'attachment; filename="rapport_audit_' . $report->getId() . '.pdf"');
+
+        return $response;
+    }
+
     #[Route(name: 'app_report_index', methods: ['GET'])]
     public function index(Request $request, ReportRepository $reportRepository): Response
     {

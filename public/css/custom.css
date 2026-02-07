@@ -1,0 +1,116 @@
+/* Custom Aesthetics for AuditAI */
+
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --danger-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+    --warning-gradient: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+    --info-gradient: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+}
+
+/* Card Enhancements */
+.card {
+    border: none !important;
+    border-radius: 12px !important;
+}
+
+.card-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Topbar Enhancement */
+.topbar {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px);
+}
+
+/* Button Enhancements */
+.btn-primary {
+    background: var(--primary-gradient) !important;
+    border: none !important;
+}
+
+.btn-success {
+    background: var(--success-gradient) !important;
+    border: none !important;
+}
+
+.btn-danger {
+    background: var(--danger-gradient) !important;
+    border: none !important;
+}
+
+/* Badge Enhancements */
+.badge-primary {
+    background: var(--primary-gradient) !important;
+}
+
+.badge-success {
+    background: var(--success-gradient) !important;
+}
+
+.badge-danger {
+    background: var(--danger-gradient) !important;
+}
+
+/* Color Overrides for Cards/Text */
+.border-left-primary {
+    border-left: 5px solid #667eea !important;
+}
+
+.border-left-success {
+    border-left: 5px solid #38ef7d !important;
+}
+
+.border-left-info {
+    border-left: 5px solid #2193b0 !important;
+}
+
+.border-left-warning {
+    border-left: 5px solid #f2994a !important;
+}
+
+.border-left-danger {
+    border-left: 5px solid #ff416c !important;
+}
+
+.text-primary {
+    color: #667eea !important;
+}
+
+.text-success {
+    color: #11998e !important;
+}
+
+.text-danger {
+    color: #ff416c !important;
+}
+
+/* Specialized Shadows */
+.shadow-primary {
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.25) !important;
+}
+
+.shadow-success {
+    box-shadow: 0 4px 20px rgba(56, 239, 125, 0.25) !important;
+}
+
+.shadow-danger {
+    box-shadow: 0 4px 20px rgba(255, 65, 108, 0.25) !important;
+}
+
+.shadow-warning {
+    box-shadow: 0 4px 20px rgba(242, 153, 74, 0.25) !important;
+}
+
+.shadow-info {
+    box-shadow: 0 4px 20px rgba(33, 147, 176, 0.25) !important;
+}
+
+/* Chatbot visibility */
+#chatbot-wrapper .card-header {
+    background: var(--primary-gradient) !important;
+    color: white !important;
+}
