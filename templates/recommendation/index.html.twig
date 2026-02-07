@@ -1,0 +1,186 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Assistant IA{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Recommendation Assistant</h1>
+    </div>
+
+    <div class="row justify-content-center">
+        <!-- List of Recent Recommendations -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-white">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-list mt-1 mr-2"></i>Dernières Recommandations Générées</h6>
+                </div>
+                <div class="card-body">
+                    {% if recommendations is defined and recommendations|length > 0 %}
+                        <div class="list-group">
+                            {% for rec in recommendations %}
+                                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1 text-primary">{{ rec.report.title }}</h5>
+                                        <div class="text-right">
+                                            <small class="d-block">{{ rec.createdAt|date('d/m/Y H:i') }}</small>
+                                            <form method="post" action="{{ path('app_recommendation_delete', {'id': rec.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette recommandation ?');" class="d-inline">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rec.id) }}">
+                                                <button class="btn btn-link text-danger p-0 border-0" title="Supprimer">
+                                                    <i class="fas fa-trash-alt fa-sm"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <p class="mb-1 text-dark">{{ rec.content|nl2br }}</p>
+                                    <small class="text-muted">Rapport #{{ rec.report.id }} - Score: {{ rec.report.score }}/100</small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center m-0">Aucune recommandation n'a encore été générée.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <!-- Chat Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-gradient-primary d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-white"><i class="fas fa-robot mr-2"></i>Assistant AuditAI</h6>
+                </div>
+                <div class="card-body d-flex flex-column" style="height: 450px;">
+                    <div id="chat-box" class="flex-grow-1 mb-3" style="overflow-y: auto; padding-right: 10px;">
+                        <!-- Welcome Message -->
+                        <div class="d-flex flex-row justify-content-start mb-4">
+                            <div class="p-3 bg-gray-200 text-gray-900 rounded-lg shadow-sm" style="max-width: 85%; border-left: 4px solid #4e73df;">
+                                <strong>Assistant AuditAI</strong><br>
+                                Bonjour! Je suis votre assistant expert en audit. Je peux analyser vos rapports, trouver des anomalies ou vous conseiller sur les meilleures pratiques.<br><br>
+                                <i>Comment puis-je vous aider aujourd'hui ?</i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Suggested Questions -->
+                    <div class="mb-2" id="suggested-questions">
+                        <small class="text-muted d-block mb-1 ml-1"><i class="far fa-lightbulb mr-1"></i> Suggestions :</small>
+                        <div class="d-flex flex-wrap">
+                            <span class="badge badge-pill badge-light border text-primary p-2 mr-2 mb-2 cursor-pointer suggested-q" style="cursor: pointer;">Rapports critiques</span>
+                            <span class="badge badge-pill badge-light border text-primary p-2 mr-2 mb-2 cursor-pointer suggested-q" style="cursor: pointer;">Scores faibles</span>
+                            <span class="badge badge-pill badge-light border text-primary p-2 mr-2 mb-2 cursor-pointer suggested-q" style="cursor: pointer;">Comment améliorer ?</span>
+                            <span class="badge badge-pill badge-light border text-primary p-2 mr-2 mb-2 cursor-pointer suggested-q" style="cursor: pointer;">Aide</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="input-group">
+                        <input type="text" id="user-input" class="form-control bg-light border-0 small" placeholder="Posez une question sur vos audits..." aria-label="Search" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="send-btn">
+                                <i class="fas fa-paper-plane fa-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sendBtn = document.getElementById('send-btn');
+        const userInput = document.getElementById('user-input');
+        const chatBox = document.getElementById('chat-box');
+
+        function appendMessage(text, sender) {
+            const div = document.createElement('div');
+            div.classList.add('d-flex', 'flex-row', 'mb-4');
+            
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('p-3', 'rounded-lg', 'shadow-sm');
+            messageContent.style.maxWidth = '85%';
+            
+            if (sender === 'bot') {
+                // Convert markdown-style to HTML
+                let formattedText = text.replace(/\n/g, '<br>');
+                formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                formattedText = formattedText.replace(/> (.*?)(<br>|$)/g, '<blockquote class="border-left pl-2 text-muted" style="margin-bottom: 0;">$1</blockquote>');
+                messageContent.innerHTML = formattedText;
+                div.classList.add('justify-content-start');
+                messageContent.classList.add('bg-white', 'text-gray-900', 'border-left-primary');
+                messageContent.style.borderLeft = '4px solid #4e73df';
+            } else {
+                messageContent.textContent = text;
+                div.classList.add('justify-content-end');
+                messageContent.classList.add('bg-primary', 'text-white');
+            }
+
+            div.appendChild(messageContent);
+            chatBox.appendChild(div);
+            // Auto scroll to bottom
+            setTimeout(() => {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 50);
+        }
+
+        async function handleSend(forcedQuery = null) {
+            const text = forcedQuery || userInput.value.trim();
+            if (text === '' && !forcedQuery) return;
+
+            // User message
+            appendMessage(text, 'user');
+            if (!forcedQuery) userInput.value = '';
+
+            // Show loading
+            const loadingId = 'loading-' + Date.now();
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = loadingId;
+            loadingDiv.classList.add('d-flex', 'flex-row', 'mb-4', 'justify-content-start');
+            loadingDiv.innerHTML = '<div class="p-3 bg-gray-200 text-gray-900 rounded-lg shadow-sm"><i class="fas fa-spinner fa-spin mr-2"></i>Analyse de vos données...</div>';
+            chatBox.appendChild(loadingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const response = await fetch('/recommendation/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: text })
+                });
+
+                const data = await response.json();
+                
+                // Remove loading
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+                
+                // Show bot response
+                appendMessage(data.response, 'bot');
+
+            } catch (error) {
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+                appendMessage("Désolé, une erreur est survenue lors de la communication avec le serveur.", 'bot');
+                console.error('Error:', error);
+            }
+        }
+
+        sendBtn.addEventListener('click', () => handleSend());
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') handleSend();
+        });
+
+        // Handle suggested questions
+        document.querySelectorAll('.suggested-q').forEach(badge => {
+            badge.addEventListener('click', function() {
+                handleSend(this.textContent);
+            });
+        });
+    });
+</script>
+{% endblock %}

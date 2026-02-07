@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Rapport{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Nouveau Rapport</h1>
+
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                {{ include('report/_form.html.twig') }}
+                
+                <a href="{{ path('app_report_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
