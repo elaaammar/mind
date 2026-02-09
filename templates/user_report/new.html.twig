@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nouveau Rapport{% endblock %}
+{% block body %}
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Nouveau Rapport</h1>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                {{ include('user_report/_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

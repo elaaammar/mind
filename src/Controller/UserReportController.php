@@ -11,14 +11,22 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/user/report')]
+#[Route('/user/rapport')]
 final class UserReportController extends AbstractController
 {
     #[Route(name: 'app_user_report_index', methods: ['GET'])]
-    public function index(ReportRepository $reportRepository): Response
+    public function index(Request $request, ReportRepository $reportRepository): Response
     {
+        $query = $request->query->get('q');
+        
+        if ($query) {
+            $reports = $reportRepository->findBySearchAndSource($query, 'user');
+        } else {
+            $reports = $reportRepository->findBy(['source' => 'user'], ['id' => 'DESC']);
+        }
+
         return $this->render('user_report/index.html.twig', [
-            'reports' => $reportRepository->findBy(['source' => 'user'], ['id' => 'DESC']),
+            'reports' => $reports,
         ]);
     }
 
@@ -89,6 +97,9 @@ final class UserReportController extends AbstractController
     public function delete(Request $request, Report $report, EntityManagerInterface $entityManager): Response
     {
         if ($report->getSource() !== 'user') {
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['success' => false, 'message' => 'Vous ne pouvez pas supprimer ce rapport.'], 403);
+            }
             throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce rapport.');
         }
 
@@ -96,6 +107,12 @@ final class UserReportController extends AbstractController
             $entityManager->remove($report);
             $entityManager->flush();
             $this->addFlash('success', 'Le rapport a été supprimé avec succès.');
+
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['success' => true, 'message' => 'Le rapport a été supprimé avec succès.']);
+            }
+        } elseif ($request->isXmlHttpRequest()) {
+            return $this->json(['success' => false, 'message' => 'Token CSRF invalide.'], 400);
         }
 
         return $this->redirectToRoute('app_user_report_index', [], Response::HTTP_SEE_OTHER);

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% block title %}Modifier Rapport{% endblock %}
+{% block body %}
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Modifier Rapport</h1>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                {{ include('user_report/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+            </div>
+            
+            <div class="card-footer">
+                <form method="post" action="{{ path('app_user_report_delete', {'id': report.id}) }}" class="ajax-delete-form" data-confirm="Êtes-vous sûr de vouloir supprimer ce rapport ?" style="display: inline-block;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ report.id) }}">
+                    <button class="btn btn-danger btn-sm" title="Supprimer">
+                        <i class="fas fa-trash"></i> Supprimer ce rapport
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

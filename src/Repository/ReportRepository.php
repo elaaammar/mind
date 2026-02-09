@@ -36,14 +36,16 @@ class ReportRepository extends ServiceEntityRepository
 //        ;
 //    }
     /**
-     * Finds reports matching the search term in title or description.
+     * Finds reports matching the search term restricted by source.
      */
-    public function findBySearch(string $query): array
+    public function findBySearchAndSource(string $query, string $source): array
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.title LIKE :query OR r.description LIKE :query')
+            ->andWhere('(r.title LIKE :query OR r.description LIKE :query)')
+            ->andWhere('r.source = :source')
             ->setParameter('query', '%' . $query . '%')
-            ->orderBy('r.createdAt', 'DESC')
+            ->setParameter('source', $source)
+            ->orderBy('r.id', 'DESC')
             ->getQuery()
             ->getResult();
     }

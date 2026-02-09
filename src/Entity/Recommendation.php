@@ -66,6 +66,21 @@ class Recommendation
         return $this;
     }
 
+    #[ORM\Column(options: ["default" => false])]
+    private ?bool $readByUser = false;
+
+    public function isReadByUser(): ?bool
+    {
+        return $this->readByUser;
+    }
+
+    public function setReadByUser(bool $readByUser): static
+    {
+        $this->readByUser = $readByUser;
+
+        return $this;
+    }
+
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
