@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Audit Submitted{% endblock %}
+
+{% block body %}
+    <div class="card shadow mb-4 text-center p-5">
+        <div class="card-body">
+            <div class="icon-circle bg-success mx-auto mb-4" style="width: 5rem; height: 5rem;">
+                <i class="fas fa-check text-white fa-3x" style="line-height: 5rem;"></i>
+            </div>
+            <h1 class="h3 mb-2 text-gray-800">Success!</h1>
+            <p class="mb-5">Your audit response for <strong>{{ audit.title }}</strong> has been successfully submitted.</p>
+            <a href="{{ path('app_front_audit_index') }}" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-arrow-right"></i>
+                </span>
+                <span class="text">Continue to Audit List</span>
+            </a>
+        </div>
+    </div>
+{% endblock %}

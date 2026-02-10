@@ -2,16 +2,13 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-        App\Entity\Utilisateur:
-            algorithm: auto
-    
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
+        # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
-                class: App\Entity\Utilisateur
+                class: App\Entity\User
                 property: email
-    
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -19,33 +16,31 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticators:
-                - App\Security\OAuthAuthenticator
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                username_parameter: email
-                password_parameter: password
+            custom_authenticator: App\Security\AppAuthenticator
             logout:
                 path: app_logout
-                target: app_login
-            remember_me:
-                secret: '%kernel.secret%'
-                lifetime: 604800
-                path: /
+                # where to redirect after logout
+                target: app_home
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#the-firewall
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/audit/manage, roles: ROLE_USER }
+        - { path: ^/audit/new, roles: ROLE_USER }
+        - { path: ^/audit/\d+/edit, roles: ROLE_USER }
+        - { path: ^/audit/\d+/delete, roles: ROLE_USER }
+        - { path: ^/question, roles: ROLE_USER }
+        # Public routes - no authentication required
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
-        - { path: ^/connect, roles: PUBLIC_ACCESS }
-        - { path: ^/dashboard, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/espace-utilisateur, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/utilisateur, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/role, roles: IS_AUTHENTICATED_FULLY }
-        # Ne pas bloquer la page d'accueil
-        # - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/audit, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

@@ -1,0 +1,92 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}{{ title|default('Audit Form') }}{% endblock %}
+
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ title|default('Audit Form') }}</h1>
+        <a href="{{ path('app_front_audit_manage_index') }}" class="btn btn-secondary btn-sm shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back to Audit List
+        </a>
+    </div>
+
+    <!-- Alert for success messages if using flash -->
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="row">
+        <!-- Audit Form Column -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Audit Details</h6>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        {{ form_row(form.title) }}
+                        {{ form_row(form.description) }}
+                        {{ form_row(form.status) }}
+                        
+                        <div class="mt-4">
+                            <button class="btn btn-primary btn-icon-split">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-save"></i>
+                                </span>
+                                <span class="text">{{ button_label|default('Save Audit') }}</span>
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Questions Management Column (only visible on edit) -->
+        {% if audit.id %}
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Questions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h6 class="m-0 font-weight-bold text-gray-800">{{ audit.questions|length }} Questions</h6>
+                        <a href="{{ path('app_front_question_new', {'id': audit.id}) }}" class="btn btn-sm btn-success shadow-sm">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Add
+                        </a>
+                    </div>
+                    
+                    {% if audit.questions|length > 0 %}
+                        <div class="list-group">
+                        {% for question in audit.questions %}
+                            <div class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1 text-truncate" style="max-width: 80%;">{{ question.content }}</h6>
+                                    <small>{{ question.type }}</small>
+                                </div>
+                                <div class="mt-2">
+                                    <a href="{{ path('app_front_question_edit', {'id': question.id}) }}" class="text-warning mr-2">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form method="post" action="{{ path('app_front_question_delete', {'id': question.id}) }}" style="display: inline-block;" onsubmit="return confirm('Delete this question?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ question.id) }}">
+                                        <button class="btn btn-link text-danger p-0 border-0" style="font-size: inherit;">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-center text-gray-500 my-4">No questions yet.</p>
+                        <a href="{{ path('app_front_question_new', {'id': audit.id}) }}" class="btn btn-primary btn-block">Add Your First Question</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

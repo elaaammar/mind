@@ -1,0 +1,38 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Public Audits{% endblock %}
+
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Available Audits</h1>
+    </div>
+
+    <div class="row">
+        {% for audit in audits %}
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    {{ audit.status }}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ audit.title }}</div>
+                                <p class="mb-0 mt-2 small text-gray-600">{{ audit.description|slice(0, 100) }}...</p>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                        <a href="{{ path('app_front_audit_show', {'id': audit.id}) }}" class="btn btn-primary btn-sm mt-3 w-100">
+                            Start Tracking / View
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">No public audits available at the moment.</div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}{{ audit.title }}{% endblock %}
+
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Audit Tracking: {{ audit.title }}</h1>
+        <a href="{{ path('app_front_audit_index') }}" class="btn btn-secondary btn-sm">Back to List</a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Audit Details</h6>
+        </div>
+        <div class="card-body">
+            <p>{{ audit.description }}</p>
+            
+            <form method="post">
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+
+                <div class="form-group mb-4">
+                    <label for="participant_name" class="font-weight-bold">Participant Name:</label>
+                    <input type="text" class="form-control" id="participant_name" name="participant_name" required placeholder="Enter your full name">
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%">#</th>
+                                <th style="width: 60%">Question / Checkpoint</th>
+                                <th>Status / Input</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for question in audit.questions %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ question.content }}</td>
+                                    <td>
+                                        {% if question.type == 'yes_no' %}
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="answers[{{ question.id }}]" id="q{{ question.id }}_yes" value="Yes" required>
+                                                <label class="form-check-label" for="q{{ question.id }}_yes">Yes</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="answers[{{ question.id }}]" id="q{{ question.id }}_no" value="No">
+                                                <label class="form-check-label" for="q{{ question.id }}_no">No</label>
+                                            </div>
+                                        {% elseif question.type == 'multiple_choice' %}
+                                            <select class="form-control form-control-sm" name="answers[{{ question.id }}]">
+                                                <option value="">Select...</option>
+                                                <option value="Option A">Option A</option>
+                                                <option value="Option B">Option B</option>
+                                                <option value="Option C">Option C</option>
+                                            </select>
+                                        {% else %}
+                                            <input type="text" class="form-control form-control-sm" name="answers[{{ question.id }}]" placeholder="Enter observation...">
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">No questions defined for this audit.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if audit.questions|length > 0 %}
+                <button type="submit" class="btn btn-success btn-icon-split mt-3">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">Submit Tracking</span>
+                </button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
