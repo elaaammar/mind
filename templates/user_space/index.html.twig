@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace Utilisateur - MindAudit{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Espace Utilisateur</h1>
+        <a href="{{ path('app_logout') }}" class="btn btn-danger btn-sm">
+            <i class="fas fa-sign-out-alt me-1"></i>
+            Se déconnecter
+        </a>
+    </div>
+
+    <!-- Welcome Card -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Bienvenue, {{ user.nomComplet }}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Informations de votre compte</h5>
+                            <p><strong>Nom :</strong> {{ user.nom }}</p>
+                            <p><strong>Prénom :</strong> {{ user.prenom }}</p>
+                            <p><strong>Email :</strong> {{ user.email }}</p>
+                            <p><strong>Rôle :</strong> {{ user.role.nom }}</p>
+                            <p><strong>Statut :</strong> 
+                                {% if user.actif %}
+                                    <span class="badge badge-success">Actif</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Inactif</span>
+                                {% endif %}
+                            </p>
+                            <p><strong>Membre depuis :</strong> {{ user.createdAt|date('d/m/Y') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Actions disponibles</h5>
+                            <div class="list-group">
+                                <a href="{{ path('app_user_edit_profile') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-user-edit"></i> Modifier mon profil
+                                </a>
+                                <a href="{{ path('app_user_change_password') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-key"></i> Changer mon mot de passe
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action" onclick="alert('Fonctionnalité à venir')">
+                                    <i class="fas fa-file-alt"></i> Consulter les audits
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action" onclick="alert('Fonctionnalité à venir')">
+                                    <i class="fas fa-history"></i> Historique des activités
+                                </a>
+                                <a href="{{ path('app_logout') }}" class="list-group-item list-group-item-action list-group-item-danger">
+                                    <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats for User -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Audits consultés</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-eye fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Dernière connexion</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Aujourd'hui</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Notifications</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-bell fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Statut du compte</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Actif</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Activité récente</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <p class="text-muted">Aucune activité récente à afficher.</p>
+                        <small>Les activités futures apparaîtront ici.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

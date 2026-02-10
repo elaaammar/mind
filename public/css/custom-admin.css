@@ -1,0 +1,255 @@
+/* Custom colors for MindAudit - Cyan/Teal theme */
+
+/* Sidebar colors */
+.sidebar {
+    background: linear-gradient(180deg, #2c5f7c 0%, #1a4d66 100%) !important;
+}
+
+.sidebar .sidebar-brand {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-dark .nav-item .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.sidebar-dark .nav-item .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-dark .nav-item .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-dark hr.sidebar-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-dark .sidebar-heading {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Topbar colors */
+.topbar {
+    background-color: #5dade2 !important;
+}
+
+.topbar .navbar-search .form-control {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+}
+
+.topbar .nav-item .nav-link {
+    color: #fff !important;
+}
+
+.topbar .nav-item .nav-link:hover {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.topbar .topbar-divider {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Dropdown colors */
+.topbar .dropdown-list .dropdown-header {
+    background-color: #5dade2;
+    border: 1px solid #5dade2;
+}
+
+/* Primary button colors */
+.btn-primary {
+    background-color: #5dade2 !important;
+    border-color: #5dade2 !important;
+}
+
+.btn-primary:hover {
+    background-color: #3498db !important;
+    border-color: #3498db !important;
+}
+
+/* Card border colors */
+.border-left-primary {
+    border-left: 0.25rem solid #5dade2 !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #1abc9c !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid #3498db !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid #f39c12 !important;
+}
+
+/* Text colors */
+.text-primary {
+    color: #5dade2 !important;
+}
+
+/* Progress bar colors */
+.progress-bar {
+    background-color: #5dade2 !important;
+}
+
+.bg-primary {
+    background-color: #5dade2 !important;
+}
+
+.bg-gradient-primary {
+    background-color: #5dade2 !important;
+    background-image: linear-gradient(180deg, #5dade2 10%, #3498db 100%) !important;
+}
+
+/* Icon colors */
+.icon-circle {
+    background-color: #5dade2;
+}
+
+/* Badge colors */
+.badge-primary {
+    background-color: #5dade2 !important;
+}
+
+/* Link colors */
+a {
+    color: #5dade2;
+}
+
+a:hover {
+    color: #3498db;
+}
+
+/* Sidebar brand icon animation */
+.sidebar-brand-icon {
+    color: #5dade2;
+}
+
+/* Card header dropdown */
+.card-header .text-primary {
+    color: #5dade2 !important;
+}
+
+/* Button icon split */
+.btn-icon-split .icon {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+/* Success colors */
+.bg-success, .btn-success {
+    background-color: #1abc9c !important;
+    border-color: #1abc9c !important;
+}
+
+.border-left-success {
+    border-left-color: #1abc9c !important;
+}
+
+.text-success {
+    color: #1abc9c !important;
+}
+
+.progress-bar.bg-success {
+    background-color: #1abc9c !important;
+}
+
+/* Info colors */
+.bg-info, .btn-info {
+    background-color: #3498db !important;
+    border-color: #3498db !important;
+}
+
+.border-left-info {
+    border-left-color: #3498db !important;
+}
+
+.text-info {
+    color: #3498db !important;
+}
+
+.progress-bar.bg-info {
+    background-color: #3498db !important;
+}
+
+/* Warning colors */
+.bg-warning, .btn-warning {
+    background-color: #f39c12 !important;
+    border-color: #f39c12 !important;
+}
+
+.border-left-warning {
+    border-left-color: #f39c12 !important;
+}
+
+.text-warning {
+    color: #f39c12 !important;
+}
+
+/* Scroll to top button */
+.scroll-to-top {
+    background-color: rgba(93, 173, 226, 0.5);
+}
+
+.scroll-to-top:hover {
+    background-color: #5dade2;
+}
+
+/* Dropdown menu */
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #5dade2;
+}
+
+/* Table hover */
+.table-hover tbody tr:hover {
+    background-color: rgba(93, 173, 226, 0.1);
+}
+
+/* Custom background for page */
+body {
+    background-color: #f4f6f9;
+}
+
+#content {
+    background-color: #f4f6f9;
+}
+
+/* Card shadows */
+.card {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1) !important;
+}
+
+/* Sidebar toggled state */
+.sidebar.toggled {
+    background: linear-gradient(180deg, #2c5f7c 0%, #1a4d66 100%) !important;
+}
+
+/* Sidebar logout button */
+.sidebar-card {
+    padding: 1rem;
+    margin: 1rem;
+}
+
+.sidebar-card .btn-danger {
+    background-color: #e74a3b !important;
+    border-color: #e74a3b !important;
+    color: white !important;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.sidebar-card .btn-danger:hover {
+    background-color: #d52a1a !important;
+    border-color: #d52a1a !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-card .btn-danger i {
+    margin-right: 0.5rem;
+}

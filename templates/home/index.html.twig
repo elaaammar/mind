@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - MindAudit{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="text-center mb-5">
+                <h1 class="display-3 fw-bold text-primary">
+                    <i class="fas fa-brain"></i> MindAudit
+                </h1>
+                <p class="lead text-muted">Plateforme d'audit interne intelligente</p>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card h-100 text-center p-4">
+                        <div class="card-body">
+                            <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">IA Intelligente</h5>
+                            <p class="card-text">L'IA pose les questions pertinentes et collecte les documents nécessaires</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 text-center p-4">
+                        <div class="card-body">
+                            <i class="fas fa-file-alt fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Rapports Automatiques</h5>
+                            <p class="card-text">Génération automatique de rapports d'audit détaillés</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 text-center p-4">
+                        <div class="card-body">
+                            <i class="fas fa-history fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title">Historique</h5>
+                            <p class="card-text">Conservation de l'historique pour améliorer les analyses futures</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-5">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-users me-2"></i>Les 3 Acteurs du Système</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="text-center p-3 border rounded">
+                                <i class="fas fa-user-shield fa-3x text-danger mb-3"></i>
+                                <h5 class="text-danger">Administrateur</h5>
+                                <p class="text-muted small">
+                                    Gestion complète du système, des utilisateurs et des rôles
+                                </p>
+                                <ul class="list-unstyled text-start small">
+                                    <li><i class="fas fa-check text-success me-2"></i>Gérer les utilisateurs</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Gérer les rôles</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Configuration système</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Accès complet</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 border rounded">
+                                <i class="fas fa-clipboard-check fa-3x text-primary mb-3"></i>
+                                <h5 class="text-primary">Auditeur</h5>
+                                <p class="text-muted small">
+                                    Responsable de la création et gestion des audits
+                                </p>
+                                <ul class="list-unstyled text-start small">
+                                    <li><i class="fas fa-check text-success me-2"></i>Créer des audits</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Gérer les audits</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Générer des rapports</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Analyser les données</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 border rounded">
+                                <i class="fas fa-user fa-3x text-info mb-3"></i>
+                                <h5 class="text-info">Utilisateur</h5>
+                                <p class="text-muted small">
+                                    Utilisateur standard participant aux audits
+                                </p>
+                                <ul class="list-unstyled text-start small">
+                                    <li><i class="fas fa-check text-success me-2"></i>Consulter les audits</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Participer aux processus</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Voir les informations</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Accès en lecture</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="{{ path('app_dashboard') }}" class="btn btn-primary btn-lg me-3">
+                    <i class="fas fa-chart-line me-2"></i>Accéder au Dashboard
+                </a>
+                <a href="{{ path('app_utilisateur_index') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-users me-2"></i>Gérer les Utilisateurs
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
