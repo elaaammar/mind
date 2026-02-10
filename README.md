@@ -263,3 +263,5 @@ Ce projet est développé dans le cadre d'un projet académique.
 ## 👨‍💻 Auteur
 
 Projet MindAudit - Gestion des Utilisateurs
+#   m i n d  
+ 
