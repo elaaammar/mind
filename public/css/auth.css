@@ -1,0 +1,122 @@
+/* Styles pour les pages d'authentification */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: cover;
+    min-height: 100vh;
+}
+
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #2e59d9;
+    border-color: #2653d4;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.form-control-user {
+    border-radius: 10rem;
+    padding: 1.5rem 1rem;
+    border: 1px solid #d1d3e2;
+    transition: all 0.3s ease;
+}
+
+.form-control-user:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.btn-user {
+    border-radius: 10rem;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card {
+    border: 0;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    border-radius: 0.35rem;
+}
+
+.bg-login-image, .bg-register-image {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: cover;
+    position: relative;
+}
+
+.bg-login-image::before, .bg-register-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="white" opacity="0.1"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="2s" repeatCount="indefinite"/></circle><circle cx="80" cy="30" r="1.5" fill="white" opacity="0.1"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="3s" repeatCount="indefinite"/></circle><circle cx="40" cy="70" r="1" fill="white" opacity="0.1"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="2.5s" repeatCount="indefinite"/></circle></svg>') center/cover;
+}
+
+.text-gray-900 {
+    color: #5a5c69 !important;
+}
+
+.small {
+    font-size: 0.875em;
+}
+
+.small:hover {
+    color: #4e73df;
+    text-decoration: none;
+}
+
+.is-invalid {
+    border-color: #e74a3b;
+}
+
+.invalid-feedback {
+    display: block;
+    color: #e74a3b;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}
+
+.alert {
+    border-radius: 0.35rem;
+    margin-bottom: 1rem;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+/* Animation pour les cartes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .form-control-user {
+        padding: 1.25rem 1rem;
+    }
+}

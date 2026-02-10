@@ -1,23 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fr">
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="MindAudit AI - Intelligence for Your Business">
+    <meta name="author" content="MindAudit">
 
     <title>{% block title %}MindAudit AI{% endblock %}</title>
 
     {% block stylesheets %}
     <!-- FontAwesome -->
-    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" type="text/css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/custom-admin.css') }}" rel="stylesheet">
     
     <style>
         /* DEFINITIVE SIDEBAR FIX (INJECTED) */
@@ -82,22 +81,20 @@
 <body id="page-top">
     {% set current_route = app.request.attributes.get('_route') %}
 
+    {% if app.user %}
     <!-- Page Wrapper -->
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar" style="background: linear-gradient(180deg, #2c5f7c 0%, #1a4d66 100%);">
 
             <!-- Sidebar - Brand -->
-            {% if app.request.attributes.get('_route') starts with 'app_user_' %}
-                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('app_user_dashboard') }}">
-                    <div class="sidebar-brand-text mx-3">Espace Utilisateur</div>
-                </a>
-            {% else %}
-                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('app_dashboard') }}">
-                    <div class="sidebar-brand-text mx-3">Espace administrateur</div>
-                </a>
-            {% endif %}
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('app_home') }}">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">MindAudit AI</div>
+            </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
@@ -106,25 +103,38 @@
                 <!-- USER SECTION -->
                 <li class="nav-item {{ current_route == 'app_user_dashboard' ? 'active' : '' }}">
                     <a class="nav-link" href="{{ path('app_user_dashboard') }}">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
                         <span>Mon Tableau de bord</span></a>
                 </li>
                 <li class="nav-item {{ current_route starts with 'app_user_report' ? 'active' : '' }}">
                     <a class="nav-link" href="{{ path('app_user_report_index') }}">
+                        <i class="fas fa-fw fa-file-alt"></i>
                         <span>Mes Rapports</span></a>
                 </li>
             {% else %}
                 <!-- ADMIN SECTION -->
                 <li class="nav-item {{ current_route == 'app_dashboard' ? 'active' : '' }}">
                     <a class="nav-link" href="{{ path('app_dashboard') }}">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
                         <span>Tableau de bord Admin</span></a>
                 </li>
+                {% if is_granted('ROLE_ADMINISTRATEUR') %}
+                <li class="nav-item {{ current_route == 'app_utilisateur_index' ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ path('app_utilisateur_index') }}">
+                        <i class="fas fa-fw fa-users"></i>
+                        <span>Gestion Utilisateurs</span>
+                    </a>
+                </li>
+                {% endif %}
                 <li class="nav-item {{ current_route == 'app_report_index' ? 'active' : '' }}">
                     <a class="nav-link" href="{{ path('app_report_index') }}">
+                        <i class="fas fa-fw fa-clipboard-list"></i>
                         <span>Gestion des Rapports</span>
                     </a>
                 </li>
                 <li class="nav-item {{ current_route == 'app_recommendation' ? 'active' : '' }}">
                     <a class="nav-link" href="{{ path('app_recommendation') }}">
+                        <i class="fas fa-fw fa-lightbulb"></i>
                         <span>Optimisations IA</span>
                     </a>
                 </li>
@@ -149,6 +159,13 @@
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
 
+            <!-- Sidebar - Logout Button -->
+            <div class="sidebar-card d-none d-lg-flex">
+                <a href="{{ path('app_logout') }}" class="btn btn-danger btn-sm btn-block">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2"></i>
+                    Déconnexion
+                </a>
+            </div>
         </ul>
         <!-- End of Sidebar -->
 
@@ -203,30 +220,37 @@
                             </a>
                         </li>
 
-                        <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
-                        </li>
-
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
+                        {% if app.user %}
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ app.user.nomComplet|default('Utilisateur') }}</span>
                                 <img class="img-profile rounded-circle"
-                                    src="{{ asset('img/undraw_profile.svg') }}">
+                                    src="https://ui-avatars.com/api/?name={{ app.user.nomComplet|default('U')|url_encode }}&background=4e73df&color=fff">
                             </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profil
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Paramètres
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ path('app_logout') }}">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Déconnexion
+                                </a>
+                            </div>
                         </li>
+                        {% endif %}
 
                     </ul>
-
                 </nav>
                 <!-- End of Topbar -->
 
@@ -234,7 +258,7 @@
                 <div class="container-fluid">
                     {% for label, messages in app.flashes %}
                         {% for message in messages %}
-                            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                            <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
                                 {{ message }}
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
@@ -246,7 +270,6 @@
 
                 {% block body %}{% endblock %}
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
 
@@ -254,30 +277,47 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2026</span>
+                        <span>Copyright &copy; MindAudit {{ "now"|date("Y") }}</span>
                     </div>
                 </div>
             </footer>
             <!-- End of Footer -->
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
+
+    {% else %}
+    <!-- Non-authenticated users -->
+    <div class="container">
+        <div class="py-4">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body_unauthenticated %}{% endblock %}
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
 
-    {% block javascripts %}
     <!-- jQuery -->
-    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap -->
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery Easing -->
-    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
     <!-- SB Admin JS -->
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
     <script>
@@ -348,10 +388,19 @@
                     setTimeout(() => toast.remove(), 300);
                 }, 3000);
             }
+            
+            // Toggle the side navigation
+            $("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
+                $("body").toggleClass("sidebar-toggled");
+                $(".sidebar").toggleClass("toggled");
+                if ($(".sidebar").hasClass("toggled")) {
+                    $('.sidebar .collapse').collapse('hide');
+                };
+            });
         });
     </script>
-    {% endblock %}
+    {% block javascripts %}{% endblock %}
+    {% block importmap %}{{ importmap('app') }}{% endblock %}
 
 </body>
-
 </html>

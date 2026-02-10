@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs - MindAudit{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="fas fa-users me-2"></i>Gestion des Utilisateurs</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ path('app_utilisateur_new') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Nouvel utilisateur
+        </a>
+    </div>
+</div>
+
+<!-- Formulaire de recherche -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <input type="text" name="search" class="form-control" placeholder="Rechercher par nom, prénom ou email..." value="{{ search }}">
+            </div>
+            <div class="col-md-3">
+                <select name="role" class="form-select">
+                    <option value="">Tous les rôles</option>
+                    {% for role in roles %}
+                        <option value="{{ role.id }}" {% if roleFilter == role.id %}selected{% endif %}>
+                            {{ role.nom }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="sort" class="form-select">
+                    <option value="nom" {% if sortBy == 'nom' %}selected{% endif %}>Nom</option>
+                    <option value="prenom" {% if sortBy == 'prenom' %}selected{% endif %}>Prénom</option>
+                    <option value="email" {% if sortBy == 'email' %}selected{% endif %}>Email</option>
+                    <option value="createdAt" {% if sortBy == 'createdAt' %}selected{% endif %}>Date création</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-1"></i>Rechercher
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom complet</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Statut</th>
+                        <th>Date création</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for utilisateur in utilisateurs %}
+                    <tr>
+                        <td>{{ utilisateur.id }}</td>
+                        <td>
+                            <strong>{{ utilisateur.nomComplet }}</strong>
+                        </td>
+                        <td>{{ utilisateur.email }}</td>
+                        <td>
+                            {% if utilisateur.role %}
+                                <span class="badge bg-info">{{ utilisateur.role.nom }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Aucun rôle</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if utilisateur.actif %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactif</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ utilisateur.createdAt ? utilisateur.createdAt|date('d/m/Y') : '' }}</td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                <a href="{{ path('app_utilisateur_show', {'id': utilisateur.id}) }}" class="btn btn-sm btn-info" title="Voir">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ path('app_utilisateur_edit', {'id': utilisateur.id}) }}" class="btn btn-sm btn-warning" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ utilisateur.id }}" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Modal de confirmation de suppression -->
+                    <div class="modal fade" id="deleteModal{{ utilisateur.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Confirmer la suppression</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Êtes-vous sûr de vouloir supprimer l'utilisateur <strong>{{ utilisateur.nomComplet }}</strong> ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <form method="post" action="{{ path('app_utilisateur_delete', {'id': utilisateur.id}) }}" style="display: inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                            Aucun utilisateur trouvé
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
