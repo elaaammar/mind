@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réclamation #{{ reclamation.id }} - Détails{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-file-alt text-primary mr-2"></i>
+            Réclamation #{{ reclamation.id }}
+        </h1>
+        <div class="btn-group">
+            <a href="{{ path('app_reclamation_index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+            <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Information Card -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-primary text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-info-circle mr-2"></i>Informations principales</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="mb-2 text-muted small">TITRE</p>
+                            <h5 class="font-weight-bold">{{ reclamation.titre }}</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2 text-muted small">CATÉGORIE</p>
+                            <span class="badge badge-info badge-pill px-3 py-2">
+                                <i class="fas fa-tag mr-1"></i>{{ reclamation.categorie }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="mb-2 text-muted small">DESCRIPTION</p>
+                        <div class="p-3 bg-light rounded border-left border-primary" style="border-left-width: 4px !important;">
+                            {{ reclamation.description|nl2br }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <p class="mb-2 text-muted small">STATUT</p>
+                            {% set statut_class = {
+                                'en_attente': 'warning',
+                                'en_cours': 'info',
+                                'resolue': 'success',
+                                'cloturee': 'secondary'
+                            } %}
+                            <span class="badge badge-{{ statut_class[reclamation.statut] ?? 'secondary' }} badge-pill px-3 py-2">
+                                {{ reclamation.statut|replace({'_': ' '})|title }}
+                            </span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <p class="mb-2 text-muted small">PRIORITÉ</p>
+                            {% set priorite_class = {
+                                'basse': 'secondary',
+                                'moyenne': 'warning',
+                                'haute': 'danger'
+                            } %}
+                            <span class="badge badge-{{ priorite_class[reclamation.priorite] ?? 'secondary' }} badge-pill px-3 py-2">
+                                <i class="fas fa-exclamation-circle mr-1"></i>{{ reclamation.priorite|title }}
+                            </span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <p class="mb-2 text-muted small">DATE DE CRÉATION</p>
+                            <p class="mb-0 font-weight-bold">
+                                <i class="far fa-calendar-alt text-primary mr-1"></i>
+                                {{ reclamation.dateCreation|date('d/m/Y à H:i') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-gradient-info text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-user mr-2"></i>Informations de contact</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <p class="mb-2 text-muted small">NOM</p>
+                        <p class="mb-0 font-weight-bold">
+                            <i class="fas fa-user-circle text-primary mr-2"></i>{{ reclamation.nom }}
+                        </p>
+                    </div>
+                    <div class="mb-4">
+                        <p class="mb-2 text-muted small">EMAIL</p>
+                        <p class="mb-0">
+                            <a href="mailto:{{ reclamation.email }}" class="text-decoration-none">
+                                <i class="fas fa-envelope text-primary mr-2"></i>{{ reclamation.email }}
+                            </a>
+                        </p>
+                    </div>
+                    <div class="mb-0">
+                        <p class="mb-2 text-muted small">TÉLÉPHONE</p>
+                        <p class="mb-0">
+                            <a href="tel:{{ reclamation.telephone }}" class="text-decoration-none">
+                                <i class="fas fa-phone text-primary mr-2"></i>{{ reclamation.telephone }}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Responses Section -->
+    {% if reclamation.reponses|length > 0 %}
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-gradient-success text-white py-3">
+            <h5 class="mb-0">
+                <i class="fas fa-comments mr-2"></i>
+                Réponses ({{ reclamation.reponses|length }})
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+                {% for reponse in reclamation.reponses %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="mb-1 font-weight-bold">
+                                <i class="fas fa-user-tie text-primary mr-1"></i>{{ reponse.nom }}
+                            </h6>
+                            <small class="text-muted">
+                                <i class="far fa-clock mr-1"></i>{{ reponse.dateCreation|date('d/m/Y à H:i') }}
+                            </small>
+                        </div>
+                        <span class="badge badge-primary badge-pill">{{ reponse.auteurType|title }}</span>
+                    </div>
+                    <p class="mb-2">{{ reponse.contenu|nl2br }}</p>
+                    {% if reponse.avisUtilisateur %}
+                    <div class="alert alert-light border-left border-info mb-0 mt-2" style="border-left-width: 3px !important;">
+                        <small class="text-muted d-block mb-1"><i class="fas fa-star mr-1"></i>Avis utilisateur:</small>
+                        {{ reponse.avisUtilisateur|nl2br }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <p class="text-muted mb-0">Aucune réponse pour cette réclamation</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="mb-4">
+        <a href="{{ path('app_reclamation_index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-1"></i> Retour à la liste
+        </a>
+        <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" class="btn btn-primary">
+            <i class="fas fa-edit mr-1"></i> Modifier
+        </a>
+        <form method="post" action="{{ path('app_reclamation_delete', {'id': reclamation.id}) }}" style="display:inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
+            <button class="btn btn-danger">
+                <i class="fas fa-trash mr-1"></i> Supprimer
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

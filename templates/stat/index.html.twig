@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques - Gestion des Réclamations{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+        <h1 class="h3 mb-4">Statistiques simples</h1>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Total Réclamations</h5>
+                        <p class="display-6 mb-0">{{ total_reclamations }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Total Réponses</h5>
+                        <p class="display-6 mb-0">{{ total_reponses }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Réclamations en attente</h5>
+                        <p class="display-6 mb-0">{{ pending_reclamations }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Réclamations par statut</h5>
+                        <canvas id="statutChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Réclamations par priorité</h5>
+                        <canvas id="prioriteChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const statutCtx = document.getElementById('statutChart');
+            if (statutCtx && {{ reclamations_by_statut|length }} > 0) {
+                new Chart(statutCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: {{ reclamations_by_statut|keys|json_encode|raw }},
+                        datasets: [{
+                            data: {{ reclamations_by_statut|values|json_encode|raw }},
+                            backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6c757d']
+                        }]
+                    }
+                });
+            }
+
+            const prioriteCtx = document.getElementById('prioriteChart');
+            if (prioriteCtx && {{ reclamations_by_priorite|length }} > 0) {
+                new Chart(prioriteCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ reclamations_by_priorite|keys|json_encode|raw }},
+                        datasets: [{
+                            label: 'Nombre',
+                            data: {{ reclamations_by_priorite|values|json_encode|raw }},
+                            backgroundColor: '#0d6efd'
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

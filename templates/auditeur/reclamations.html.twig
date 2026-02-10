@@ -1,0 +1,379 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Espace Auditeur - Réclamations{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .page-header {
+            background: var(--gradient-1);
+            padding-top: 150px;
+            padding-bottom: 80px;
+            color: var(--white);
+            margin-bottom: 50px;
+        }
+        .page-header h1 {
+            color: var(--white);
+            font-weight: 700;
+        }
+        .reclamation-form-wrapper {
+            padding: 50px 40px;
+            background: var(--white);
+            border: 1px solid var(--gray-4);
+            border-radius: 10px;
+            box-shadow: var(--shadow-2);
+            transition: all 0.3s ease-out 0s;
+            height: 100%;
+        }
+        .reclamation-form-wrapper:hover {
+            box-shadow: var(--shadow-4);
+        }
+        .reclamation-form-wrapper .form-control,
+        .reclamation-form-wrapper .form-select {
+            padding: 12px 25px;
+            border-radius: 30px;
+            border: 1px solid var(--gray-4);
+            margin-bottom: 5px;
+            transition: all 0.3s ease-out 0s;
+        }
+        .reclamation-form-wrapper textarea.form-control {
+            border-radius: 18px;
+        }
+        .reclamation-form-wrapper .form-control:focus,
+        .reclamation-form-wrapper .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: none;
+        }
+        .reclamation-card {
+            border-radius: 10px;
+            border: 1px solid var(--gray-4);
+            transition: all 0.3s ease-out 0s;
+        }
+        .reclamation-card:hover {
+            box-shadow: var(--shadow-2);
+        }
+        .status-badge {
+            font-size: 11px;
+            padding: 5px 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .last-child-no-border:last-child {
+            border-bottom: none !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8 col-md-12 col-12">
+                    <div class="header-content">
+                        <h1><i class="fas fa-user-check mr-2"></i> Espace Auditeur</h1>
+                        <p class="text-white opacity-75 mt-3">
+                            Soumettez vos réclamations liées aux audits et suivez les réponses de l'équipe d'administration en temps réel.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12 col-12 text-lg-end mt-4 mt-lg-0">
+                    <button type="button" class="btn primary-btn-outline rounded-full text-white border-white" data-bs-toggle="modal" data-bs-target="#chatbotModal">
+                        <i class="fas fa-robot mr-2"></i> Chatbot Audit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container pb-150 mb-5">
+        <div class="row g-4 align-items-stretch">
+            <div class="col-md-6">
+                <div class="reclamation-form-wrapper">
+                    <div class="section-title-five text-start m-0 mb-4">
+                        <h6>Réclamation</h6>
+                        <h2 class="h3">Nouvelle demande</h2>
+                    </div>
+                    
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'contact-form'}}) }}
+
+                        {% if form.vars.errors|length %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                <strong>Veuillez corriger les erreurs suivantes :</strong>
+                                {{ form_errors(form) }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            {{ form_label(form.titre, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.titre, {'attr': {'class': 'form-control', 'placeholder': 'Objet de votre réclamation'}}) }}
+                            <div class="invalid-feedback d-block">
+                                {{ form_errors(form.titre) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                            <div class="form-text">
+                                <i class="fas fa-info-circle mr-1"></i>Donnez le maximum de détails pour faciliter le traitement.
+                            </div>
+                            <div class="invalid-feedback d-block">
+                                {{ form_errors(form.description) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-7 mb-3">
+                                {{ form_label(form.categorie, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                {{ form_widget(form.categorie, {'attr': {'class': 'form-select'}}) }}
+                                <div class="invalid-feedback d-block">
+                                    {{ form_errors(form.categorie) }}
+                                </div>
+                            </div>
+                            <div class="col-md-5 mb-3">
+                                {{ form_label(form.priorite, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                {{ form_widget(form.priorite, {'attr': {'class': 'form-select'}}) }}
+                                <div class="invalid-feedback d-block">
+                                    {{ form_errors(form.priorite) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="fw-bold mb-3 font-weight-bold"><i class="fas fa-user mr-1 text-primary"></i>Vos coordonnées</h6>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                                <div class="invalid-feedback d-block">
+                                    {{ form_errors(form.nom) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.email, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                                <div class="invalid-feedback d-block">
+                                    {{ form_errors(form.email) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.telephone, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback d-block">
+                                {{ form_errors(form.telephone) }}
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn primary-btn rounded-full py-3">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Envoyer la réclamation
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+            <div class="col-lg-6">
+                <div class="reclamation-form-wrapper">
+                    <div class="section-title-five text-start m-0 mb-4">
+                        <h6>Suivi</h6>
+                        <h2 class="h3">Vos demandes</h2>
+                        {% if filter_email %}
+                            <p class="small text-primary mt-1 fw-bold">Email: {{ filter_email }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mt-4">
+                        {% if not filter_email %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-search fa-3x text-light mb-3"></i>
+                                <p class="text-muted">
+                                    Saisissez une réclamation avec votre email pour voir l'historique de vos demandes et les réponses associées.
+                                </p>
+                            </div>
+                        {% elseif my_reclamations is empty %}
+                            <div class="alert alert-info">
+                                Aucune réclamation trouvée pour <strong>{{ filter_email }}</strong>.
+                            </div>
+                        {% else %}
+                            <div class="list-group list-group-flush">
+                                {% for reclamation in my_reclamations %}
+                                    <div class="list-group-item px-0 py-4 border-bottom">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1 fw-bold">{{ reclamation.titre }}</h6>
+                                                <small class="text-muted">
+                                                    {{ reclamation.dateCreation|date('d/m/Y H:i') }}
+                                                    {% if reclamation.categorie %}
+                                                        · {{ reclamation.categorie }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                            <div class="text-end">
+                                                <span class="badge rounded-pill
+                                                    {% if reclamation.statut == 'en_attente' %}bg-warning
+                                                    {% elseif reclamation.statut == 'en_cours' %}bg-info
+                                                    {% elseif reclamation.statut == 'resolue' %}bg-success
+                                                    {% else %}bg-secondary{% endif %}">
+                                                    {{ reclamation.statut|replace({'_':' '})|title }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {% if reclamation.reponses is not empty %}
+                                            <div class="mt-3 p-3 bg-light rounded shadow-sm">
+                                                <strong class="d-block mb-2 text-success"><i class="fas fa-reply mr-1"></i>Réponses de l'administration :</strong>
+                                                {% for reponse in reclamation.reponses %}
+                                                    <div class="mb-3 border-bottom pb-2 last-child-no-border">
+                                                        <small class="text-muted d-block small mb-1">
+                                                            Le {{ reponse.dateCreation|date('d/m/Y H:i') }}
+                                                            {% if reponse.auteurType %}· {{ reponse.auteurType|title }}{% endif %}
+                                                        </small>
+                                                        <div class="small">{{ reponse.contenu }}</div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            <div class="mt-3 small text-muted">
+                                                <i class="fas fa-hourglass-half mr-1"></i>En attente de traitement...
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Confirmation Modal (Bootstrap 5) #}
+    <div class="modal fade confirmation-modal" id="confirmationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-5">
+                    <i class="fas fa-check-circle text-success fa-4x mb-4"></i>
+                    <h4 class="mb-3">Réclamation envoyée !</h4>
+                    <p class="text-muted mb-0">
+                        Votre demande a bien été transmise. Vous pouvez suivre son évolution sur cette page.
+                    </p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-5 pt-0">
+                    <button type="button" class="btn btn-primary px-5 rounded-pill" data-bs-dismiss="modal">D'accord</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Chatbot Modal (Bootstrap 5) #}
+    <div class="modal fade" id="chatbotModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header" style="background: var(--gradient-1); border: none;">
+                    <h5 class="modal-title text-white"><i class="fas fa-robot mr-2"></i>Assistant Audit & Réclamations</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex flex-column p-4" style="height: 60vh;">
+                    <div id="chatbot-messages" class="flex-grow-1 border rounded p-3 mb-3 overflow-auto bg-light">
+                        <div class="text-muted small mb-3">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Je suis là pour vous aider avec vos questions sur les audits et les réclamations.
+                        </div>
+                    </div>
+                    <form id="chatbot-form">
+                        <div class="input-group shadow-sm">
+                            <input type="text" id="chatbot-input" class="form-control py-2" placeholder="Posez votre question...">
+                            <button class="btn btn-primary px-4" type="submit">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if show_confirmation_modal %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var myModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+                myModal.show();
+            });
+        </script>
+    {% endif %}
+    <script>
+        (function () {
+            const form = document.getElementById('chatbot-form');
+            const input = document.getElementById('chatbot-input');
+            const messages = document.getElementById('chatbot-messages');
+
+            if (!form || !input || !messages) return;
+
+            function addMessage(text, type) {
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('mb-3', 'd-flex', 'flex-column');
+                
+                if (type === 'user') {
+                    wrapper.classList.add('align-items-end');
+                    wrapper.innerHTML = `
+                        <div class="p-3 bg-primary text-white rounded shadow-sm small max-width-75">
+                            ${text.replace(/\n/g, '<br>')}
+                        </div>
+                        <small class="text-muted mt-1 mr-2">Vous</small>
+                    `;
+                } else {
+                    wrapper.classList.add('align-items-start');
+                    wrapper.innerHTML = `
+                        <div class="p-3 bg-white border rounded shadow-sm small max-width-75">
+                            ${text.replace(/\n/g, '<br>')}
+                        </div>
+                        <small class="text-muted mt-1 ml-2">Chatbot</small>
+                    `;
+                }
+
+                messages.appendChild(wrapper);
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const text = input.value.trim();
+                if (!text) return;
+
+                addMessage(text, 'user');
+                input.value = '';
+
+                fetch('{{ path('api_chatbot') }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({message: text}),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.answer) {
+                        addMessage(data.answer, 'bot');
+                    } else {
+                        addMessage("Désolé, je rencontre une difficulté.", 'bot');
+                    }
+                })
+                .catch(() => {
+                    addMessage("Une erreur est survenue.", 'bot');
+                });
+            });
+        })();
+    </script>
+{% endblock %}

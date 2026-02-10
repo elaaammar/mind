@@ -1,0 +1,267 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Tableau de Bord</h1>
+        <div class="d-flex">
+            <a href="{{ path('app_reclamation_index') }}" class="btn btn-primary shadow-sm mr-2">
+                <i class="fas fa-list fa-sm text-white-50"></i> Réclamations
+            </a>
+            <a href="{{ path('app_reponse_reclamation_index') }}" class="btn btn-primary shadow-sm">
+                <i class="fas fa-reply fa-sm text-white-50"></i> Réponses
+            </a>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Total réclamations -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-lg h-100 py-2" style="border-left: 4px solid var(--primary) !important;">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Réclamations</div>
+                            <div class="h3 mb-0 font-weight-bold text-gray-900">{{ totalReclamations }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-primary-light" style="width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: hsla(230, 85%, 60%, 0.1);">
+                                <i class="fas fa-exclamation-circle text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total réponses -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-lg h-100 py-2" style="border-left: 4px solid var(--success) !important;">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Réponses</div>
+                            <div class="h3 mb-0 font-weight-bold text-gray-900">{{ totalReponses }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div style="width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: hsla(150, 70%, 45%, 0.1);">
+                                <i class="fas fa-reply text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Résolues % -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-lg h-100 py-2" style="border-left: 4px solid var(--info) !important;">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Taux Résolution</div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h3 mb-0 mr-3 font-weight-bold text-gray-900">
+                                        {% set pct = totalReclamations > 0 ? (byStatut.resolue|default(0) * 100 / totalReclamations) : 0 %}
+                                        {{ pct|round }}%
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2" style="height: 6px; background: hsla(190, 80%, 45%, 0.1);">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ pct|round }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div style="width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: hsla(190, 80%, 45%, 0.1);">
+                                <i class="fas fa-check-double text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- En attente -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-lg h-100 py-2" style="border-left: 4px solid var(--warning) !important;">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">En attente</div>
+                            <div class="h3 mb-0 font-weight-bold text-gray-900">{{ byStatut.en_attente|default(0) }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div style="width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: hsla(40, 95%, 55%, 0.1);">
+                                <i class="fas fa-clock text-warning"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Évolution (30 jours)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="lineChart30d"></canvas>
+                    </div>
+                    <hr>
+                    <small class="text-muted">Réclamations & réponses par jour (basé sur la date de création).</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Réclamations par statut</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-2">
+                        <canvas id="pieChartStatut"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Réclamations par priorité</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="barChartPriorite"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <!-- Chart plugins -->
+    <script src="{{ asset('sb-admin-2/vendor/chart.js/Chart.min.js') }}"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var byStatut = {{ byStatut|json_encode|raw }};
+        var byPriorite = {{ byPriorite|json_encode|raw }};
+        var recByDate = {{ reclamationsByDate|json_encode|raw }};
+        var repByDate = {{ reponsesByDate|json_encode|raw }};
+
+        // Build a date index for 30 days (to align both series)
+        var mapRec = {};
+        recByDate.forEach(function(r) { mapRec[r.date] = r.count; });
+        var mapRep = {};
+        repByDate.forEach(function(r) { mapRep[r.date] = r.count; });
+
+        // Generate last 30 days labels (YYYY-MM-DD)
+        var labels = [];
+        var recData = [];
+        var repData = [];
+        for (var i = 29; i >= 0; i--) {
+            var d = new Date();
+            d.setDate(d.getDate() - i);
+            var yyyy = d.getFullYear();
+            var mm = String(d.getMonth() + 1).padStart(2, '0');
+            var dd = String(d.getDate()).padStart(2, '0');
+            var key = yyyy + '-' + mm + '-' + dd;
+            labels.push(dd + '/' + mm);
+            recData.push(mapRec[key] || 0);
+            repData.push(mapRep[key] || 0);
+        }
+
+        // Line chart
+        var ctxLine = document.getElementById('lineChart30d');
+        if (ctxLine) {
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Réclamations',
+                            data: recData,
+                            borderColor: '#4e73df',
+                            backgroundColor: 'rgba(78,115,223,0.1)',
+                            fill: true,
+                            lineTension: 0.3
+                        },
+                        {
+                            label: 'Réponses',
+                            data: repData,
+                            borderColor: '#1cc88a',
+                            backgroundColor: 'rgba(28,200,138,0.1)',
+                            fill: true,
+                            lineTension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    legend: { display: true }
+                }
+            });
+        }
+
+        // Pie chart (status)
+        var statutLabels = {
+            en_attente: 'En attente',
+            en_cours: 'En cours',
+            resolue: 'Résolue',
+            cloturee: 'Clôturée'
+        };
+        var statutKeys = ['en_attente', 'en_cours', 'resolue', 'cloturee'];
+        var pieLabels = statutKeys.map(function(k) { return statutLabels[k] || k; });
+        var pieData = statutKeys.map(function(k) { return byStatut[k] || 0; });
+
+        var ctxPie = document.getElementById('pieChartStatut');
+        if (ctxPie) {
+            new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: pieLabels,
+                    datasets: [{
+                        data: pieData,
+                        backgroundColor: ['#f6c23e', '#36b9cc', '#1cc88a', '#858796']
+                    }]
+                },
+                options: { maintainAspectRatio: false, legend: { position: 'bottom' } }
+            });
+        }
+
+        // Bar chart (priority)
+        var prioLabels = { basse: 'Basse', moyenne: 'Moyenne', haute: 'Haute' };
+        var prioKeys = ['basse', 'moyenne', 'haute'];
+        var barLabels = prioKeys.map(function(k) { return prioLabels[k] || k; });
+        var barData = prioKeys.map(function(k) { return byPriorite[k] || 0; });
+        var ctxBar = document.getElementById('barChartPriorite');
+        if (ctxBar) {
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: barLabels,
+                    datasets: [{
+                        label: 'Nombre',
+                        data: barData,
+                        backgroundColor: ['#e0e0e0', '#f6c23e', '#e74a3b']
+                    }]
+                },
+                options: { maintainAspectRatio: false, legend: { display: false } }
+            });
+        }
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,13 @@
+<div class="d-flex flex-wrap align-items-center justify-content-between">
+    <div class="d-flex align-items-center">
+        <span class="text-muted small mr-2">{{ pagination.getTotalItemCount }} résultat(s)</span>
+        <select name="per_page" class="form-control form-control-sm per-page-select" style="width: auto;">
+            {% for size in page_size_options %}
+                <option value="{{ size }}" {{ current_page_size == size ? 'selected' : '' }}>{{ size }} par page</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="pagination-wrapper">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+</div>

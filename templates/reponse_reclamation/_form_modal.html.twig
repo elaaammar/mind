@@ -1,0 +1,30 @@
+<div class="modal-form-content p-4" data-modal-title="{{ modal_title|e('html_attr') }}">
+    {{ form_start(form, { 'attr': { 'id': 'entity-form', 'class': 'modern-form', 'novalidate': 'novalidate' } }) }}
+        {% if form.vars.errors|length %}
+            <div class="alert alert-danger">{{ form_errors(form) }}</div>
+        {% endif %}
+        <div class="row">
+            <div class="col-12 mb-4">
+                {{ form_row(form.reclamation, {'attr': {'class': 'form-control select2'}}) }}
+            </div>
+            <div class="col-12 mb-4">
+                {{ form_row(form.contenu, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+            </div>
+            <div class="col-md-6 mb-4">
+                {{ form_row(form.nom, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="col-md-6 mb-4">
+                {{ form_row(form.auteurType, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="col-12 mb-4">
+                {{ form_row(form.avisUtilisateur, {'attr': {'class': 'form-control', 'rows': 3}}) }}
+            </div>
+        </div>
+        <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary ml-2">
+                <i class="fas fa-check-circle mr-1"></i> Enregistrer
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réponses réclamation - Export PDF</title>
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; font-size: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+        th { background-color: #4e73df; color: white; }
+        tr:nth-child(even) { background-color: #f8f9fc; }
+        h1 { font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Réponses aux réclamations</h1>
+    <p>Export du {{ "now"|date("d/m/Y H:i") }} — {{ reponse_reclamations|length }} élément(s)</p>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Réclamation</th>
+                <th>Contenu</th>
+                <th>Nom</th>
+                <th>Type auteur</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rr in reponse_reclamations %}
+            <tr>
+                <td>{{ rr.id }}</td>
+                <td>{% if rr.reclamation %}#{{ rr.reclamation.id }} {{ rr.reclamation.titre }}{% else %}—{% endif %}</td>
+                <td>{{ rr.contenu|slice(0, 80) }}{% if rr.contenu|length > 80 %}...{% endif %}</td>
+                <td>{{ rr.nom }}</td>
+                <td>{{ rr.auteurType|default('—') }}</td>
+                <td>{{ rr.dateCreation ? rr.dateCreation|date('d/m/Y H:i') : '' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

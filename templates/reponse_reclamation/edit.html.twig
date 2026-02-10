@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Réponse #{{ reponse_reclamation.id }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-edit text-success mr-2"></i>
+            Modifier Réponse #{{ reponse_reclamation.id }}
+        </h1>
+        <div class="btn-group">
+            <a href="{{ path('app_reponse_reclamation_index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left mr-1"></i> Retour
+            </a>
+            <a href="{{ path('app_reponse_reclamation_show', {'id': reponse_reclamation.id}) }}" class="btn btn-outline-info">
+                <i class="fas fa-eye mr-1"></i> Voir
+            </a>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-success text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-comment-dots mr-2"></i>Modifier les informations</h5>
+                </div>
+                <div class="card-body p-4">
+
+                    {{ form_start(form, {'attr': {'class': 'modern-form', 'novalidate': 'novalidate'}}) }}
+
+                    {% if form.vars.errors|length %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <strong>Erreurs de validation:</strong>
+                            {{ form_errors(form) }}
+                            <button type="button" class="close" data-dismiss="alert">
+                                <span>&times;</span>
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <!-- Réclamation -->
+                        <div class="col-12 mb-4">
+                            <div class="form-group">
+                                {{ form_label(form.reclamation, null, {'label_attr': {'class': 'font-weight-bold text-dark'}}) }}
+                                {{ form_widget(form.reclamation, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle mr-1"></i>Réclamation associée
+                                </small>
+                                <div class="invalid-feedback d-block">
+                                    {{ form_errors(form.reclamation) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenu -->
+                        <div class="col-12 mb-4">
+                            <div class="form-group">
+                                {{ form_label(form.contenu, null, {'label_attr': {'class': 'font-weight-bold text-dark'}}) }}
+                                {{ form_widget(form.contenu, {'attr': {'class': 'form-control', 'rows': 6}}) }}
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle mr-1"></i>Contenu de la réponse
+                                </small>
+                                <div class="invalid-feedback d-block">
+                                    {{ form_errors(form.contenu) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nom -->
+                        <div class="col-md-6 mb-4">
+                            <div class="form-group">
+                                {{ form_label(form.nom, null, {'label_attr': {'class': 'font-weight-bold text-dark'}}) }}
+                                {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                                <div class="invalid-feedback d-block">
+                                    {{ form_errors(form.nom) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Type d'auteur -->
+                        <div class="col-md-6 mb-4">
+                            <div class="form-group">
+                                {{ form_label(form.auteurType, null, {'label_attr': {'class': 'font-weight-bold text-dark'}}) }}
+                                {{ form_widget(form.auteurType, {'attr': {'class': 'form-control'}}) }}
+                                <div class="invalid-feedback d-block">
+                                    {{ form_errors(form.auteurType) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Avis utilisateur -->
+                        <div class="col-12 mb-4">
+                            <div class="form-group">
+                                {{ form_label(form.avisUtilisateur, null, {'label_attr': {'class': 'font-weight-bold text-dark'}}) }}
+                                {{ form_widget(form.avisUtilisateur, {'attr': {'class': 'form-control', 'rows': 3}}) }}
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-star mr-1"></i>Optionnel - Avis ou commentaire
+                                </small>
+                                <div class="invalid-feedback d-block">
+                                    {{ form_errors(form.avisUtilisateur) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                        <a href="{{ path('app_reponse_reclamation_index') }}" class="btn btn-light btn-lg mr-2">
+                            <i class="fas fa-times mr-1"></i> Annuler
+                        </a>
+
+                        <button type="submit" class="btn btn-success btn-lg px-5">
+                            <i class="fas fa-save mr-2"></i> Enregistrer les modifications
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+
+                    {# DELETE FORM (OUTSIDE main form) #}
+                    <form method="post"
+                          action="{{ path('app_reponse_reclamation_delete', {'id': reponse_reclamation.id}) }}"
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réponse ?');"
+                          class="mt-3">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reponse_reclamation.id) }}">
+                        <button class="btn btn-danger btn-lg">
+                            <i class="fas fa-trash mr-1"></i> Supprimer
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
