@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réclamations - Export PDF</title>
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; font-size: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+        th { background-color: #4e73df; color: white; }
+        tr:nth-child(even) { background-color: #f8f9fc; }
+        .badge { padding: 2px 6px; border-radius: 3px; font-size: 9px; }
+        .badge-success { background: #1cc88a; color: #fff; }
+        .badge-warning { background: #f6c23e; color: #000; }
+        .badge-info { background: #36b9cc; color: #fff; }
+        .badge-secondary { background: #858796; color: #fff; }
+        h1 { font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Liste des réclamations</h1>
+    <p>Export du {{ "now"|date("d/m/Y H:i") }} — {{ reclamations|length }} élément(s)</p>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Priorité</th>
+                <th>Catégorie</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in reclamations %}
+            <tr>
+                <td>{{ r.id }}</td>
+                <td>{{ r.titre }}</td>
+                <td>{{ r.nom }}</td>
+                <td>{{ r.email }}</td>
+                <td>{{ r.dateCreation ? r.dateCreation|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ r.statut }}</td>
+                <td>{{ r.priorite }}</td>
+                <td>{{ r.categorie|default('—') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

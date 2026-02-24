@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap');
+
+:root {
+    --primary: hsl(230, 85%, 60%);
+    --primary-light: hsl(230, 85%, 75%);
+    --secondary: hsl(260, 20%, 50%);
+    --success: hsl(150, 70%, 45%);
+    --info: hsl(190, 80%, 45%);
+    --warning: hsl(40, 95%, 55%);
+    --danger: hsl(0, 85%, 60%);
+    --dark: hsl(230, 25%, 15%);
+    --light: hsl(210, 20%, 98%);
+    --glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+    --sidebar-width: 260px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f2f5;
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+}
+
+
+/* Premium Cards */
+.card {
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1.25rem 1.5rem;
+}
+
+/* Modern Tables */
+.table {
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    background: transparent;
+}
+
+.table thead th {
+    border: none;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    color: var(--secondary);
+    padding: 1rem 1.5rem;
+}
+
+.table tbody tr {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    border-radius: 12px;
+    transition: var(--transition);
+}
+
+.table tbody tr:hover {
+    background: #f8fafc;
+    transform: scale(1.002);
+}
+
+.table td {
+    border: none;
+    padding: 1.25rem 1.5rem;
+    vertical-align: middle;
+}
+
+.table td:first-child {
+    border-radius: 12px 0 0 12px;
+}
+
+.table td:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+/* Vibrant Buttons */
+.btn {
+    border-radius: 10px;
+    padding: 0.6rem 1.25rem;
+    font-weight: 600;
+    transition: var(--transition);
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, hsl(230, 85%, 60%), hsl(260, 85%, 60%));
+    box-shadow: 0 4px 15px rgba(78, 115, 223, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(78, 115, 223, 0.4);
+    background: linear-gradient(135deg, hsl(230, 85%, 55%), hsl(260, 85%, 55%));
+}
+
+/* Status Badges */
+.badge {
+    padding: 0.5em 1em;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.badge-success {
+    background-color: hsla(150, 70%, 45%, 0.1);
+    color: var(--success);
+}
+
+.badge-warning {
+    background-color: hsla(40, 95%, 55%, 0.1);
+    color: var(--warning);
+}
+
+.badge-danger {
+    background-color: hsla(0, 85%, 60%, 0.1);
+    color: var(--danger);
+}
+
+.badge-info {
+    background-color: hsla(190, 80%, 45%, 0.1);
+    color: var(--info);
+}
+
+/* Modal Fixes & Styling */
+.modal-content {
+    border: none;
+    border-radius: 24px;
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1.5rem 2rem;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--glass-border);
+    padding: 1.25rem 2rem;
+}
+
+.form-control {
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px hsla(230, 85%, 60%, 0.1);
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--secondary);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container-fluid {
+    animation: fadeIn 0.5s ease-out;
+}

@@ -11,6 +11,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6",
         "dompdf/dompdf": "^3.1",
+<<<<<<< HEAD
         "knpuniversity/oauth2-client-bundle": "^2.20",
         "league/oauth2-facebook": "^2.2",
         "league/oauth2-google": "^4.1",
@@ -18,6 +19,11 @@
         "phpdocumentor/reflection-docblock": "^5.2",
         "phpstan/phpdoc-parser": "^2.3",
         "stof/doctrine-extensions-bundle": "^1.15",
+=======
+        "knplabs/knp-paginator-bundle": "^6.10",
+        "phpdocumentor/reflection-docblock": "5.2",
+        "phpstan/phpdoc-parser": "^2.3",
+>>>>>>> origin/medlhr
         "symfony/asset": "6.4.*",
         "symfony/asset-mapper": "6.4.*",
         "symfony/console": "6.4.*",
@@ -27,6 +33,10 @@
         "symfony/flex": "^2",
         "symfony/form": "6.4.*",
         "symfony/framework-bundle": "6.4.*",
+<<<<<<< HEAD
+=======
+        "symfony/google-mailer": "6.4.*",
+>>>>>>> origin/medlhr
         "symfony/http-client": "6.4.*",
         "symfony/intl": "6.4.*",
         "symfony/mailer": "6.4.*",
@@ -47,8 +57,13 @@
         "symfony/validator": "6.4.*",
         "symfony/web-link": "6.4.*",
         "symfony/yaml": "6.4.*",
+<<<<<<< HEAD
         "tattali/calendar-bundle": "^1.3",
         "twig/extra-bundle": "^2.12|^3.0",
+=======
+        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/string-extra": "^3.23",
+>>>>>>> origin/medlhr
         "twig/twig": "^2.12|^3.0"
     },
     "config": {

@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/auditAI.iml" filepath="$PROJECT_DIR$/.idea/auditAI.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/gestiondaudit-main.iml" filepath="$PROJECT_DIR$/.idea/gestiondaudit-main.iml" />
+>>>>>>> origin/medlhr
     </modules>
   </component>
 </project>

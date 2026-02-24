@@ -1,0 +1,149 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réponse #{{ reponse_reclamation.id }} - Détails{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-comment-dots text-primary mr-2"></i>
+            Réponse #{{ reponse_reclamation.id }}
+        </h1>
+        <div class="btn-group">
+            <a href="{{ path('app_reponse_reclamation_index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+            <a href="{{ path('app_reponse_reclamation_edit', {'id': reponse_reclamation.id}) }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Response Card -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-success text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-comment-alt mr-2"></i>Contenu de la réponse</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p class="mb-2 text-muted small">AUTEUR</p>
+                            <h6 class="font-weight-bold">
+                                <i class="fas fa-user-circle text-primary mr-2"></i>{{ reponse_reclamation.nom }}
+                            </h6>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2 text-muted small">TYPE D'AUTEUR</p>
+                            <span class="badge badge-primary badge-pill px-3 py-2">
+                                {{ reponse_reclamation.auteurType|title }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <p class="mb-2 text-muted small">CONTENU</p>
+                        <div class="p-3 bg-light rounded border-left border-success" style="border-left-width: 4px !important;">
+                            {{ reponse_reclamation.contenu|nl2br }}
+                        </div>
+                    </div>
+
+                    {% if reponse_reclamation.avisUtilisateur %}
+                    <div class="mb-4">
+                        <p class="mb-2 text-muted small">AVIS UTILISATEUR</p>
+                        <div class="alert alert-info border-left border-info" style="border-left-width: 4px !important;">
+                            <i class="fas fa-star text-warning mr-2"></i>
+                            {{ reponse_reclamation.avisUtilisateur|nl2br }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2 text-muted small">DATE DE CRÉATION</p>
+                            <p class="mb-0 font-weight-bold">
+                                <i class="far fa-calendar-alt text-primary mr-1"></i>
+                                {{ reponse_reclamation.dateCreation|date('d/m/Y à H:i') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Reclamation Card -->
+        <div class="col-lg-4 mb-4">
+            {% if reponse_reclamation.reclamation %}
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-gradient-primary text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-link mr-2"></i>Réclamation associée</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <p class="mb-2 text-muted small">ID</p>
+                        <h5 class="font-weight-bold text-primary">#{{ reponse_reclamation.reclamation.id }}</h5>
+                    </div>
+                    <div class="mb-3">
+                        <p class="mb-2 text-muted small">TITRE</p>
+                        <p class="mb-0 font-weight-bold">{{ reponse_reclamation.reclamation.titre }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <p class="mb-2 text-muted small">STATUT</p>
+                        {% set statut_class = {
+                            'en_attente': 'warning',
+                            'en_cours': 'info',
+                            'resolue': 'success',
+                            'cloturee': 'secondary'
+                        } %}
+                        <span class="badge badge-{{ statut_class[reponse_reclamation.reclamation.statut] ?? 'secondary' }} badge-pill px-3 py-2">
+                            {{ reponse_reclamation.reclamation.statut|replace({'_': ' '})|title }}
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <p class="mb-2 text-muted small">PRIORITÉ</p>
+                        {% set priorite_class = {
+                            'basse': 'secondary',
+                            'moyenne': 'warning',
+                            'haute': 'danger'
+                        } %}
+                        <span class="badge badge-{{ priorite_class[reponse_reclamation.reclamation.priorite] ?? 'secondary' }} badge-pill px-3 py-2">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ reponse_reclamation.reclamation.priorite|title }}
+                        </span>
+                    </div>
+                    <div class="mt-4">
+                        <a href="{{ path('app_reclamation_show', {'id': reponse_reclamation.reclamation.id}) }}" class="btn btn-outline-primary btn-block">
+                            <i class="fas fa-eye mr-1"></i> Voir la réclamation
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-unlink fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">Aucune réclamation associée</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mb-4">
+        <a href="{{ path('app_reponse_reclamation_index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-1"></i> Retour à la liste
+        </a>
+        <a href="{{ path('app_reponse_reclamation_edit', {'id': reponse_reclamation.id}) }}" class="btn btn-primary">
+            <i class="fas fa-edit mr-1"></i> Modifier
+        </a>
+        <form method="post" action="{{ path('app_reponse_reclamation_delete', {'id': reponse_reclamation.id}) }}" style="display:inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réponse ?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reponse_reclamation.id) }}">
+            <button class="btn btn-danger">
+                <i class="fas fa-trash mr-1"></i> Supprimer
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

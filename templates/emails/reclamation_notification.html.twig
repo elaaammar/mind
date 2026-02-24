@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Nouvelle réclamation d'auditeur</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding: 24px 0;">
+    <tr>
+        <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <tr>
+                    <td style="background: linear-gradient(135deg,#4e73df,#1cc88a); padding: 16px 24px; color: #ffffff;">
+                        <h2 style="margin: 0; font-size: 20px;">
+                            Nouvelle réclamation d'un auditeur
+                        </h2>
+                        <p style="margin: 4px 0 0; font-size: 13px; opacity: .9;">
+                            Plateforme de gestion d'audit
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 20px 24px;">
+                        <p style="margin-top: 0; font-size: 14px;">
+                            Bonjour,
+                        </p>
+                        <p style="font-size: 14px;">
+                            Une nouvelle réclamation vient d'être soumise par un auditeur via le portail.
+                        </p>
+
+                        <h3 style="font-size: 16px; margin-bottom: 8px;">Détails de la réclamation</h3>
+                        <table cellpadding="0" cellspacing="0" width="100%" style="font-size: 13px; margin-bottom: 16px;">
+                            <tr>
+                                <td style="width: 35%; font-weight: bold; padding: 4px 0;">Titre</td>
+                                <td style="padding: 4px 0;">{{ reclamation.titre }}</td>
+                            </tr>
+                            {% if reclamation.categorie %}
+                                <tr>
+                                    <td style="font-weight: bold; padding: 4px 0;">Catégorie</td>
+                                    <td style="padding: 4px 0;">{{ reclamation.categorie }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if reclamation.priorite %}
+                                <tr>
+                                    <td style="font-weight: bold; padding: 4px 0;">Priorité</td>
+                                    <td style="padding: 4px 0;">{{ reclamation.priorite|title }}</td>
+                                </tr>
+                            {% endif %}
+                            <tr>
+                                <td style="font-weight: bold; padding: 4px 0;">Statut initial</td>
+                                <td style="padding: 4px 0;">En attente</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; padding: 4px 0;">Date de création</td>
+                                <td style="padding: 4px 0;">{{ reclamation.dateCreation|date('d/m/Y H:i') }}</td>
+                            </tr>
+                        </table>
+
+                        <h3 style="font-size: 16px; margin-bottom: 8px;">Description</h3>
+                        <p style="background: #f8f9fc; border-radius: 6px; padding: 10px 12px; font-size: 13px; white-space: pre-line;">
+                            {{ reclamation.description }}
+                        </p>
+
+                        <h3 style="font-size: 16px; margin: 16px 0 8px;">Coordonnées de l'auditeur</h3>
+                        <table cellpadding="0" cellspacing="0" width="100%" style="font-size: 13px; margin-bottom: 16px;">
+                            <tr>
+                                <td style="width: 35%; font-weight: bold; padding: 4px 0;">Nom</td>
+                                <td style="padding: 4px 0;">{{ reclamation.nom }}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; padding: 4px 0;">Email</td>
+                                <td style="padding: 4px 0;">{{ reclamation.email }}</td>
+                            </tr>
+                            {% if reclamation.telephone %}
+                                <tr>
+                                    <td style="font-weight: bold; padding: 4px 0;">Téléphone</td>
+                                    <td style="padding: 4px 0;">{{ reclamation.telephone }}</td>
+                                </tr>
+                            {% endif %}
+                        </table>
+
+                        <p style="font-size: 13px; margin-top: 20px; color: #6c757d;">
+                            Vous pouvez traiter cette réclamation dans l'interface d'administration de la plateforme.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background: #f8f9fc; padding: 10px 24px; text-align: center; font-size: 11px; color: #6c757d;">
+                        Cet email a été généré automatiquement par le module de gestion des réclamations.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
+
