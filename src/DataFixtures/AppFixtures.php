@@ -106,6 +106,64 @@ class AppFixtures extends Fixture
         $inactif->setActif(false);
         $manager->persist($inactif);
 
+        // --- AJOUT DE RAPPORTS ET RECOMMANDATIONS ---
+        
+        // 1. Un rapport critique pour l'admin
+        $report1 = new \App\Entity\Report();
+        $report1->setTitle('Audit de Sécurité Infrastructure Q1');
+        $report1->setDescription('Analyse approfondie des vulnérabilités serveurs et réseaux pour le premier trimestre.');
+        $report1->setStatus('Critique');
+        $report1->setType('Sécurité');
+        $report1->setScore(45);
+        $report1->setPriority('Forte');
+        $report1->setSource('admin');
+        $manager->persist($report1);
+
+        $rec1 = new \App\Entity\Recommendation();
+        $rec1->setContent("Mettre à jour le kernel Linux sur les serveurs de production pour corriger la faille CVE-2024-XXXX.");
+        $rec1->setReport($report1);
+        $rec1->setPotentialImpact(25);
+        $manager->persist($rec1);
+
+        $rec2 = new \App\Entity\Recommendation();
+        $rec2->setContent("Renforcer la politique de rotation des mots de passe pour les comptes à privilèges.");
+        $rec2->setReport($report1);
+        $rec2->setPotentialImpact(10);
+        $manager->persist($rec2);
+
+        // 2. Un rapport validé pour l'admin
+        $report2 = new \App\Entity\Report();
+        $report2->setTitle('Évaluation Performance Application Mobile');
+        $report2->setDescription("Rapport sur les temps de réponse et l'expérience utilisateur de l'application mobile.");
+        $report2->setStatus('Validé');
+        $report2->setType('Performance');
+        $report2->setScore(88);
+        $report2->setPriority('Moyenne');
+        $report2->setSource('admin');
+        $manager->persist($report2);
+
+        $rec3 = new \App\Entity\Recommendation();
+        $rec3->setContent("Optimiser le cache des images pour réduire le temps de chargement de 15%.");
+        $rec3->setReport($report2);
+        $rec3->setIsApplied(true);
+        $manager->persist($rec3);
+
+        // 3. Un rapport pour les utilisateurs (espace client)
+        $report3 = new \App\Entity\Report();
+        $report3->setTitle('Audit Conformité RGPD');
+        $report3->setDescription("Vérification de la conformité des formulaires de collecte de données.");
+        $report3->setStatus('En cours');
+        $report3->setType('Juridique');
+        $report3->setScore(62);
+        $report3->setPriority('Basse');
+        $report3->setSource('user');
+        $manager->persist($report3);
+
+        $rec4 = new \App\Entity\Recommendation();
+        $rec4->setContent("Ajouter une case à cocher explicite pour le consentement marketing sur la page d'inscription.");
+        $rec4->setReport($report3);
+        $manager->persist($rec4);
+
         $manager->flush();
     }
 }
