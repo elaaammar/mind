@@ -25,17 +25,64 @@ class RecommendationController extends AbstractController
     #[Route('/recommendation', name: 'app_recommendation')]
     public function index(Request $request, RecommendationRepository $recommendationRepository): Response
     {
-        $query = $request->query->get('q');
-        
+        $query      = $request->query->get('q');
+        $reportId   = $request->query->get('report');
+        $filterStatus = $request->query->get('status'); // 'applied' | 'pending' | ''
+
+        $allRecs = $recommendationRepository->findBy([], ['createdAt' => 'DESC']);
+
+        // Build filtered list
+        $recommendations = $allRecs;
         if ($query) {
             $recommendations = $recommendationRepository->findBySearch($query);
-        } else {
-            $recommendations = $recommendationRepository->findBy([], ['createdAt' => 'DESC']);
+        }
+        if ($reportId) {
+            $recommendations = array_filter($recommendations, fn($r) => $r->getReport()->getId() == $reportId);
+        }
+        if ($filterStatus === 'applied') {
+            $recommendations = array_filter($recommendations, fn($r) => $r->isApplied());
+        } elseif ($filterStatus === 'pending') {
+            $recommendations = array_filter($recommendations, fn($r) => !$r->isApplied());
+        }
+
+        // Stats
+        $total    = count($allRecs);
+        $applied  = count(array_filter($allRecs, fn($r) => $r->isApplied()));
+        $pending  = $total - $applied;
+        $thisMonth = count(array_filter($allRecs, fn($r) => $r->getCreatedAt()->format('Y-m') === date('Y-m')));
+
+        // Score trend: group avg score by month (last 6 months)
+        $reportRepo = $recommendationRepository->getEntityManager()->getRepository(\App\Entity\Report::class);
+        $reports    = $reportRepo->findBy([], ['title' => 'ASC']);
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('recommendation/_list.html.twig', [
+                'recommendations' => array_values($recommendations),
+            ]);
         }
 
         return $this->render('recommendation/index.html.twig', [
-            'recommendations' => $recommendations,
-            'reports' => $recommendationRepository->getEntityManager()->getRepository(\App\Entity\Report::class)->findBy([], ['title' => 'ASC']),
+            'recommendations' => array_values($recommendations),
+            'reports'         => $reports,
+            'stats' => [
+                'total'      => $total,
+                'applied'    => $applied,
+                'pending'    => $pending,
+                'this_month' => $thisMonth,
+            ],
+        ]);
+    }
+
+
+    #[Route('/recommendation/{id}/toggle-applied', name: 'app_recommendation_toggle_applied', methods: ['POST'])]
+    public function toggleApplied(Recommendation $recommendation, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $recommendation->setIsApplied(!$recommendation->isApplied());
+        $entityManager->flush();
+
+        return $this->json([
+            'success'   => true,
+            'isApplied' => $recommendation->isApplied(),
         ]);
     }
 

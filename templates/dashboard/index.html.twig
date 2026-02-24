@@ -1,54 +1,182 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Dashboard Administrateur{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --danger-gradient: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            --info-gradient: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .container-fluid {
+            padding: 0 2rem 2rem 2rem;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.25rem;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+        }
+
+        .stat-card {
+            border: none;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .stat-card.bg-primary-light::before { background: var(--primary-gradient); }
+        .stat-card.bg-success-light::before { background: var(--success-gradient); }
+        .stat-card.bg-danger-light::before { background: var(--danger-gradient); }
+        .stat-card.bg-info-light::before { background: var(--info-gradient); }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .icon-primary { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+        .icon-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .icon-danger { background: rgba(244, 63, 94, 0.1); color: #f43f5e; }
+        .icon-info { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; }
+
+        .btn-modern {
+            border-radius: 0.75rem;
+            padding: 0.625rem 1.25rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary-modern {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-control-modern {
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+        }
+
+        .chart-container {
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1.25rem 1.5rem;
+        }
+
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #f1f5f9;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Tableau de Bord</h1>
+        <div class="d-sm-flex align-items-center justify-content-between mb-3">
             <div>
-                <a href="{{ path('app_report_new') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-plus fa-sm text-white-50 mr-1"></i> Nouveau Rapport
+                <h1 class="h2 mb-1">{{ 'dashboard.admin_title'|trans }}</h1>
+                <p class="text-muted">{{ 'dashboard.admin_welcome'|trans }}</p>
+            </div>
+            <div>
+                <a href="{{ path('app_report_new') }}" class="btn-modern btn-primary-modern btn shadow-sm">
+                    <i class="fas fa-plus fa-sm me-2 text-white"></i> {{ 'btn.new_report'|trans }}
                 </a>
             </div>
         </div>
 
         <!-- Filters Row -->
-        <div class="card shadow mb-4">
-            <div class="card-body">
-                <form id="filter-form" class="row align-items-end">
-                    <div class="col-md-2 mb-3 mb-md-0">
-                        <label class="small font-weight-bold">Type</label>
-                        <select name="type" class="form-control form-control-sm filter-input">
-                            <option value="">Tous les types</option>
+        <div class="card filter-section border-0 shadow-sm mb-3">
+            <div class="card-body p-0">
+                <form id="filter-form" class="row align-items-end g-3">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-uppercase text-muted">{{ 'filter.type'|trans }}</label>
+                        <select name="type" class="form-select form-control-modern filter-input">
+                            <option value="">{{ 'filter.all_types'|trans }}</option>
                             {% for t in availableTypes %}
                                 <option value="{{ t }}">{{ t }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-2 mb-3 mb-md-0">
-                        <label class="small font-weight-bold">Statut</label>
-                        <select name="status" class="form-control form-control-sm filter-input">
-                            <option value="">Tous les statuts</option>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-uppercase text-muted">{{ 'filter.status'|trans }}</label>
+                        <select name="status" class="form-select form-control-modern filter-input">
+                            <option value="">{{ 'filter.all_statuses'|trans }}</option>
                             {% for s in availableStatuses %}
                                 <option value="{{ s }}">{{ s }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-2 mb-3 mb-md-0">
-                        <label class="small font-weight-bold">Priorité</label>
-                        <select name="priority" class="form-control form-control-sm filter-input">
-                            <option value="">Toutes les priorités</option>
-                            <option value="Faible">Faible</option>
-                            <option value="Moyenne">Moyenne</option>
-                            <option value="Forte">Forte</option>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-uppercase text-muted">{{ 'filter.priority'|trans }}</label>
+                        <select name="priority" class="form-select form-control-modern filter-input">
+                            <option value="">{{ 'filter.all_priorities'|trans }}</option>
+                            <option value="Faible">{{ 'filter.low'|trans }}</option>
+                            <option value="Moyenne">{{ 'filter.medium'|trans }}</option>
+                            <option value="Forte">{{ 'filter.high'|trans }}</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <button type="reset" id="reset-filters" class="btn btn-sm btn-secondary btn-block">
-                            <i class="fas fa-undo fa-sm"></i> Réinitialiser
+                    <div class="col-md-3">
+                        <button type="reset" id="reset-filters" class="btn btn-modern btn-outline-secondary w-100">
+                            <i class="fas fa-undo fa-sm me-2"></i> {{ 'btn.reset'|trans }}
                         </button>
                     </div>
                 </form>
@@ -56,38 +184,33 @@
         </div>
 
         <!-- Content Row -->
-        <div class="row">
+        <div class="row g-4 mb-5">
 
             <!-- Total Reports Card -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow-primary h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Total des Rapports</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalReports }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-file-invoice fa-2x text-primary op-50"></i>
-                            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card bg-primary-light h-100 border-0">
+                    <div class="card-body p-4">
+                        <div class="stat-icon icon-primary">
+                            <i class="fas fa-file-invoice"></i>
                         </div>
+                        <div class="text-uppercase small fw-bold text-muted mb-1">{{ 'dashboard.total_reports'|trans }}</div>
+                        <div class="h2 mb-0 fw-bold">{{ totalReports }}</div>
                     </div>
                 </div>
             </div>
 
             <!-- Global Score Average Card -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow-success h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    Moyenne des Scores</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ avgScore }}%</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-chart-line fa-2x text-success op-50"></i>
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card bg-success-light h-100 border-0">
+                    <div class="card-body p-4">
+                        <div class="stat-icon icon-success">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="text-uppercase small fw-bold text-muted mb-1">{{ 'dashboard.avg_score'|trans }}</div>
+                        <div class="h2 mb-0 fw-bold text-success">{{ avgScore }}%</div>
+                        <div class="mt-3">
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ avgScore }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -95,29 +218,18 @@
             </div>
 
             <!-- Critical Reports Card -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-danger shadow-danger h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Rapports Critiques
-                                </div>
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col-auto">
-                                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ criticalCount }}</div>
-                                    </div>
-                                    <div class="col">
-                                        {% set percentCritical = (totalReports > 0) ? (criticalCount / totalReports * 100) : 0 %}
-                                        <div class="progress progress-sm mr-2">
-                                            <div class="progress-bar bg-danger" role="progressbar"
-                                                style="width: {{ percentCritical }}%" aria-valuenow="{{ percentCritical }}" aria-valuemin="0"
-                                                aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-exclamation-triangle fa-2x text-danger op-50"></i>
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card bg-danger-light h-100 border-0">
+                    <div class="card-body p-4">
+                        <div class="stat-icon icon-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="text-uppercase small fw-bold text-muted mb-1">{{ 'dashboard.critical_reports'|trans }}</div>
+                        <div class="h2 mb-0 fw-bold text-danger">{{ criticalCount }}</div>
+                        {% set percentCritical = (totalReports > 0) ? (criticalCount / totalReports * 100) : 0 %}
+                        <div class="mt-3">
+                            <div class="progress">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: {{ percentCritical }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -125,49 +237,43 @@
             </div>
 
             <!-- Total Recommendations Card -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow-info h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    Recommandations IA</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalRecommendations }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-lightbulb fa-2x text-info op-50"></i>
-                            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card bg-info-light h-100 border-0">
+                    <div class="card-body p-4">
+                        <div class="stat-icon icon-info">
+                            <i class="fas fa-lightbulb"></i>
                         </div>
+                        <div class="text-uppercase small fw-bold text-muted mb-1">{{ 'dashboard.ai_insights'|trans }}</div>
+                        <div class="h2 mb-0 fw-bold text-info">{{ totalRecommendations }}</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Charts Row -->
-        <div class="row">
-
-            <!-- Area Chart: Evolution Performance -->
-            <div class="col-xl-8 col-lg-7">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Évolution des Scores Moyens (%)</h6>
+        <div class="row g-4 mb-4">
+            <!-- Priority Bar Chart -->
+            <div class="col-xl-8">
+                <div class="card border-0 h-100">
+                    <div class="card-header">
+                        <h6 class="mb-0 fw-bold text-uppercase small text-muted">Priorités des Recommandations</h6>
                     </div>
-                    <div class="card-body">
-                        <div class="chart-area">
-                            <canvas id="performanceScoreChart"></canvas>
+                    <div class="card-body chart-container">
+                        <div style="height: 350px;">
+                            <canvas id="priorityBarChart"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Pie Chart: Répartition Statuts -->
-            <div class="col-xl-4 col-lg-5">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Statuts des Rapports</h6>
+            <div class="col-xl-4">
+                <div class="card border-0 h-100">
+                    <div class="card-header">
+                        <h6 class="mb-0 fw-bold text-uppercase small text-muted">Répartition des Statuts</h6>
                     </div>
-                    <div class="card-body">
-                        <div class="chart-pie pt-4 pb-2">
+                    <div class="card-body chart-container">
+                        <div style="height: 300px;">
                             <canvas id="statusPieChart"></canvas>
                         </div>
                     </div>
@@ -175,30 +281,30 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row g-4">
             <!-- Bar Chart: Reports by Type -->
-            <div class="col-xl-6 col-lg-6">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Répartition par Type (Catégorie)</h6>
+            <div class="col-xl-6">
+                <div class="card border-0">
+                    <div class="card-header">
+                        <h6 class="mb-0 fw-bold text-uppercase small text-muted">Répartition par Type</h6>
                     </div>
-                    <div class="card-body">
-                        <div class="chart-bar">
+                    <div class="card-body chart-container">
+                        <div style="height: 300px;">
                             <canvas id="reportTypeChart"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Bar Chart: Recs by Priority -->
-            <div class="col-xl-6 col-lg-6">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Recommandations par Priorité</h6>
+            <!-- Area Chart: Evolution Performance -->
+            <div class="col-xl-6">
+                <div class="card border-0">
+                    <div class="card-header">
+                        <h6 class="mb-0 fw-bold text-uppercase small text-muted">Évolution des Scores (%)</h6>
                     </div>
-                    <div class="card-body">
-                        <div class="chart-bar">
-                            <canvas id="priorityBarChart"></canvas>
+                    <div class="card-body chart-container">
+                        <div style="height: 300px;">
+                            <canvas id="performanceScoreChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -211,15 +317,20 @@
 {% block javascripts %}
     {{ parent() }}
     <!-- Page level plugins -->
-    <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Set new default font family and font color to mimic Bootstrap's default styling
-        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-        Chart.defaults.global.defaultFontColor = '#858796';
+        const chartFont = {
+            family: "'Outfit', sans-serif",
+            size: 12,
+            color: '#64748b'
+        };
 
         let charts = {};
 
         function initCharts(data) {
+            Chart.defaults.font = chartFont;
+            Chart.defaults.color = '#64748b';
+
             // 1. Status Pie Chart
             const ctxStatus = document.getElementById("statusPieChart");
             charts.status = new Chart(ctxStatus, {
@@ -228,16 +339,17 @@
                     labels: data.reportsByStatus.map(s => s.status),
                     datasets: [{
                         data: data.reportsByStatus.map(s => s.count),
-                        backgroundColor: ['#667eea', '#38ef7d', '#ff416c', '#f2994a', '#2193b0'],
-                        hoverBackgroundColor: ['#5a67d8', '#2ecc71', '#e74c3c', '#f39c12', '#2980b9'],
-                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                        backgroundColor: ['#6366f1', '#10b981', '#f43f5e', '#f59e0b', '#0ea5e9'],
+                        borderWidth: 0,
+                        hoverOffset: 20
                     }],
                 },
                 options: {
                     maintainAspectRatio: false,
-                    tooltips: { backgroundColor: "rgb(255,255,255)", bodyFontColor: "#858796", borderColor: '#dddfeb', borderWidth: 1, xPadding: 15, yPadding: 15, displayColors: false, caretPadding: 10 },
-                    legend: { display: true, position: 'bottom' },
-                    cutoutPercentage: 80,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
+                    },
+                    cutout: '75%',
                 },
             });
 
@@ -248,39 +360,37 @@
                 data: {
                     labels: data.reportsByType.map(t => t.type),
                     datasets: [{
-                        label: "Nombre de rapports",
-                        backgroundColor: "#667eea",
-                        hoverBackgroundColor: "#764ba2",
-                        borderColor: "#667eea",
+                        label: "Rapports",
+                        backgroundColor: '#6366f1',
+                        borderRadius: 8,
                         data: data.reportsByType.map(t => t.count),
                     }],
                 },
-                options: { maintainAspectRatio: false, scales: { yAxes: [{ ticks: { beginAtZero: true, stepSize: 1 } }] } }
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
             // 3. Performance Curve
             const ctxScores = document.getElementById("performanceScoreChart");
+            const gradient = ctxScores.getContext('2d').createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+
             charts.scores = new Chart(ctxScores, {
                 type: 'line',
                 data: {
                     labels: data.scoresByMonth.map(m => m.month),
                     datasets: [{
                         label: "Score Moyen (%)",
-                        lineTension: 0.3,
-                        backgroundColor: "rgba(102, 126, 234, 0.1)",
-                        borderColor: "#667eea",
-                        pointRadius: 4,
-                        pointBackgroundColor: "#667eea",
-                        pointBorderColor: "#fff",
-                        pointHoverRadius: 6,
-                        pointHoverBackgroundColor: "#764ba2",
-                        pointHoverBorderColor: "#fff",
-                        pointHitRadius: 10,
-                        pointBorderWidth: 2,
+                        fill: true,
+                        backgroundColor: gradient,
+                        borderColor: "#6366f1",
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        tension: 0.4,
                         data: data.scoresByMonth.map(m => m.avg_score),
                     }],
                 },
-                options: { maintainAspectRatio: false, scales: { yAxes: [{ ticks: { beginAtZero: true, max: 100 } }] } }
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
             // 4. Priority Bar Chart
@@ -291,27 +401,25 @@
                     labels: data.recommendationsByPriority.map(p => p.priority),
                     datasets: [{
                         label: "Recommandations",
-                        backgroundColor: ["#ff416c", "#f2994a", "#38ef7d"],
+                        backgroundColor: ["#f43f5e", "#f59e0b", "#10b981"],
+                        borderRadius: 8,
                         data: data.recommendationsByPriority.map(p => p.count),
                     }],
                 },
-                options: { maintainAspectRatio: false, scales: { yAxes: [{ ticks: { beginAtZero: true, stepSize: 1 } }] } }
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
         function updateUI(data) {
-            // Update Cards
-            document.querySelector('.card.border-left-primary .h5').textContent = data.totalReports;
-            document.querySelector('.card.border-left-success .h5').textContent = data.avgScore + '%';
-            document.querySelector('.card.border-left-danger .h5').textContent = data.criticalCount;
-            document.querySelector('.card.border-left-info .h5').textContent = data.totalRecommendations;
+            document.querySelector('.stat-card.bg-primary-light .h2').textContent = data.totalReports;
+            document.querySelector('.stat-card.bg-success-light .h2').textContent = data.avgScore + '%';
+            document.querySelector('.stat-card.bg-danger-light .h2').textContent = data.criticalCount;
+            document.querySelector('.stat-card.bg-info-light .h2').textContent = data.totalRecommendations;
             
             const percentCritical = (data.totalReports > 0) ? (data.criticalCount / data.totalReports * 100) : 0;
-            const progressBar = document.querySelector('.card.border-left-danger .progress-bar');
-            progressBar.style.width = percentCritical + '%';
-            progressBar.setAttribute('aria-valuenow', percentCritical);
+            document.querySelector('.stat-card.bg-success-light .progress-bar').style.width = data.avgScore + '%';
+            document.querySelector('.stat-card.bg-danger-light .progress-bar').style.width = percentCritical + '%';
 
-            // Update Charts
             charts.status.data.labels = data.reportsByStatus.map(s => s.status);
             charts.status.data.datasets[0].data = data.reportsByStatus.map(s => s.count);
             charts.status.update();
@@ -343,31 +451,22 @@
         document.addEventListener('DOMContentLoaded', function() {
             initCharts(initialData);
 
-            const filterInputs = document.querySelectorAll('.filter-input');
-            const filterForm = document.getElementById('filter-form');
-
-            const refreshStats = () => {
-                const params = new URLSearchParams(new FormData(filterForm));
-                // Add global search if exists
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('q')) params.append('q', urlParams.get('q'));
-
-                fetch('{{ path('app_dashboard_stats') }}?' + params.toString())
-                    .then(response => response.json())
-                    .then(data => updateUI(data))
-                    .catch(error => console.error('Error fetching stats:', error));
-            };
-
-            filterInputs.forEach(input => {
-                input.addEventListener('change', refreshStats);
-                // Also trigger on input for dates to be more responsive
-                if (input.type === 'date') {
-                    input.addEventListener('input', refreshStats);
-                }
+            document.querySelectorAll('.filter-input').forEach(input => {
+                input.addEventListener('change', () => {
+                    const params = new URLSearchParams(new FormData(document.getElementById('filter-form')));
+                    fetch('{{ path('app_dashboard_stats') }}?' + params.toString())
+                        .then(r => r.json())
+                        .then(d => updateUI(d));
+                });
             });
 
             document.getElementById('reset-filters').addEventListener('click', () => {
-                setTimeout(refreshStats, 10); // Wait for reset to apply
+                setTimeout(() => {
+                    const params = new URLSearchParams(new FormData(document.getElementById('filter-form')));
+                    fetch('{{ path('app_dashboard_stats') }}?' + params.toString())
+                        .then(r => r.json())
+                        .then(d => updateUI(d));
+                }, 10);
             });
         });
     </script>

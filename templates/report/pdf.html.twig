@@ -111,6 +111,39 @@
             <td>{{ report.createdAt|date('d/m/Y H:i') }}</td>
         </tr>
     </table>
+    
+    <div style="margin-top: 30px; padding: 15px; background-color: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px;">
+        <h3 style="margin-top: 0; color: #c53030; font-size: 16px;"><span style="font-family: DejaVu Sans, sans-serif;">⚠️</span> AI Risk Prediction</h3>
+        {% set risk_score = 100 - (report.score|default(0)) %}
+        {% set risk_level = 'Low' %}
+        {% set risk_color = '#38a169' %}
+        
+        {% if risk_score > 80 or report.priority == 'Forte' %}
+            {% set risk_level = 'Critical' %}
+            {% set risk_color = '#e53e3e' %}
+        {% elseif risk_score > 50 or report.priority == 'Moyenne' %}
+            {% set risk_level = 'Elevated' %}
+            {% set risk_color = '#dd6b20' %}
+        {% elseif risk_score > 20 %}
+            {% set risk_level = 'Moderate' %}
+            {% set risk_color = '#3182ce' %}
+        {% endif %}
+
+        <table style="width: 100%; border: none;">
+            <tr>
+                <td style="width: 40%; text-align: center; border: none;">
+                    <span style="font-size: 24px; font-weight: bold; color: {{ risk_color }};">{{ risk_level }}</span><br>
+                    <span style="font-size: 10px; color: #666; text-transform: uppercase;">Risk Level</span>
+                </td>
+                <td style="width: 60%; border: none; padding-left: 20px;">
+                    <div style="font-size: 12px; margin-bottom: 5px;"><strong>Risk Index: {{ risk_score }}%</strong></div>
+                    <div style="width: 100%; background-color: #edf2f7; height: 12px; border-radius: 6px;">
+                        <div style="width: {{ risk_score }}%; background-color: {{ risk_color }}; height: 100%; border-radius: 6px;"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
 
     <h2 class="section-title">Description de l'Audit</h2>
     <div style="background-color: #fff; padding: 10px; border: 1px solid #eee;">

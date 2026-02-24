@@ -49,4 +49,17 @@ class ReportRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Finds reports matching the search term across all sources.
+     */
+    public function findBySearch(string $query): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('(r.title LIKE :query OR r.description LIKE :query)')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('r.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

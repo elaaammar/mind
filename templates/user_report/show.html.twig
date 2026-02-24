@@ -1,7 +1,10 @@
 {% extends 'base.html.twig' %}
+
+{% block title %}{{ 'report.details'|trans }}{% endblock %}
+
 {% block body %}
     <div class="container-fluid">
-        <h1 class="h3 mb-4 text-gray-800">Détails du Rapport</h1>
+        <h1 class="h3 mb-4 text-gray-800">{{ 'report.details'|trans }} #{{ report.id }}</h1>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">{{ report.title }}</h6>
@@ -9,11 +12,11 @@
             <div class="card-body">
                 <table class="table">
                     <tbody>
-                        <tr><th>Id</th><td>{{ report.id }}</td></tr>
-                        <tr><th>Titre</th><td>{{ report.title }}</td></tr>
-                        <tr><th>Type</th><td>{{ report.type }}</td></tr>
-                        <tr><th>Description</th><td>{{ report.description|nl2br }}</td></tr>
-                        <tr><th>Statut</th><td>
+                        <tr><th>{{ 'report.id'|trans }}</th><td>{{ report.id }}</td></tr>
+                        <tr><th>{{ 'report.title'|trans }}</th><td>{{ report.title }}</td></tr>
+                        <tr><th>{{ 'report.type'|trans }}</th><td>{{ report.type }}</td></tr>
+                        <tr><th>{{ 'report.description'|trans }}</th><td>{{ report.description|nl2br }}</td></tr>
+                        <tr><th>{{ 'report.status'|trans }}</th><td>
                             {% if report.status == 'Validé' %}
                                 <span class="badge badge-success">{{ report.status }}</span>
                             {% elseif report.status == 'En cours' %}
@@ -25,21 +28,93 @@
                     </tbody>
                 </table>
 
+                <hr>
+                <div class="card shadow-sm mb-4 border-left-danger">
+                    <div class="card-header py-3 bg-light">
+                        <h6 class="m-0 font-weight-bold text-danger"><i class="fas fa-microchip mr-2"></i>{{ 'ai.risk_assessment'|trans }}</h6>
+                    </div>
+                    <div class="card-body">
+                        {% set risk_score = 100 - (report.score|default(0)) %}
+                        {% set risk_level = 'Low Risk' %}
+                        {% set risk_color = 'success' %}
+                        
+                        {% if risk_score > 80 or report.priority == 'Forte' %}
+                            {% set risk_level = 'Critical Risk' %}
+                            {% set risk_color = 'danger' %}
+                        {% elseif risk_score > 50 or report.priority == 'Moyenne' %}
+                            {% set risk_level = 'Elevated Risk' %}
+                            {% set risk_color = 'warning' %}
+                        {% elseif risk_score > 20 %}
+                            {% set risk_level = 'Moderate Risk' %}
+                            {% set risk_color = 'info' %}
+                        {% endif %}
+
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <span class="h4 mb-0 font-weight-bold text-{{ risk_color }}">{{ risk_level }}</span>
+                            <span class="badge badge-{{ risk_color }} p-2">{{ risk_score }}% {{ 'ai.risk_index'|trans }}</span>
+                        </div>
+                        
+                        <div class="progress mb-2" style="height: 10px; border-radius: 5px;">
+                            <div class="progress-bar bg-{{ risk_color }}" role="progressbar" style="width: {{ risk_score }}%"></div>
+                        </div>
+                        <p class="small text-muted italic">{{ 'ai.model_analysis'|trans }}</p>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="card shadow mb-4 border-left-success" id="what-if-card">
+                    <div class="card-header py-3 bg-light d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-success"><i class="fas fa-magic mr-2"></i>Scénario "What If" - Simulation d'Impact</h6>
+                        <span class="badge badge-success" id="simulation-status">Mode Simulation Actif</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-6 border-right">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Score Actuel</div>
+                                <div class="h3 mb-0 font-weight-bold text-gray-800" id="current-score-val">{{ report.score|default(0) }}%</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Score Futur Potentiel</div>
+                                <div class="h3 mb-0 font-weight-bold text-success animate__animated" id="future-score-val">{{ report.score|default(0) }}%</div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="progress" style="height: 30px; border-radius: 15px;">
+                                <div id="sim-progress-current" class="progress-bar bg-primary" role="progressbar" style="width: {{ report.score|default(0) }}%">Actuel</div>
+                                <div id="sim-progress-gain" class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%">Gain</div>
+                            </div>
+                        </div>
+                        <p class="small text-muted mt-2 mb-0">
+                            <i class="fas fa-info-circle"></i> Sélectionnez les recommandations ci-dessous pour simuler l'amélioration de votre score d'audit.
+                        </p>
+                    </div>
+                </div>
+
                 {% if report.recommendations|length > 0 %}
                     <hr>
                     <div class="card shadow-sm mb-4 border-left-info">
                         <div class="card-header py-3 bg-light">
-                            <h6 class="m-0 font-weight-bold text-info"><i class="fas fa-lightbulb mr-2"></i>Conseils et Recommandations de l'Admin</h6>
+                            <h6 class="m-0 font-weight-bold text-info"><i class="fas fa-lightbulb mr-2"></i>{{ 'recommendations.admin_advice'|trans }}</h6>
                         </div>
                         <div class="card-body">
                             <div class="list-group list-group-flush">
                                 {% for recommendation in report.recommendations %}
-                                    <div class="list-group-item px-0 {% if not recommendation.isReadByUser %}bg-light-blue{% endif %}">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="badge badge-info"><i class="fas fa-clock mr-1"></i> {{ recommendation.createdAt|date('d/m/Y H:i') }}</span>
+                                    <div class="list-group-item px-0 {% if not recommendation.isReadByUser %}bg-light-blue{% endif %} d-flex align-items-start">
+                                        <div class="custom-control custom-checkbox mr-3 mt-1">
+                                            <input type="checkbox" class="custom-control-input recommendation-checkbox" 
+                                                   id="rec-{{ recommendation.id }}" 
+                                                   data-impact="{{ recommendation.potentialImpact|default(10) }}"
+                                                   onclick="updateWhatIfSimulation()">
+                                            <label class="custom-control-label" for="rec-{{ recommendation.id }}"></label>
                                         </div>
-                                        <div class="recommendation-text text-dark">
-                                            {{ recommendation.content|raw|nl2br }}
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="badge badge-info"><i class="fas fa-clock mr-1"></i> {{ recommendation.createdAt|date('d/m/Y H:i') }}</span>
+                                                <span class="badge badge-outline-success font-italic">+{{ recommendation.potentialImpact|default(10) }} pts</span>
+                                            </div>
+                                            <div class="recommendation-text text-dark">
+                                                {{ recommendation.content|raw|nl2br }}
+                                            </div>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -48,8 +123,44 @@
                     </div>
                 {% endif %}
 
-                <a href="{{ path('app_user_report_index') }}" class="btn btn-secondary">Retour à la liste</a>
-                <a href="{{ path('app_user_report_edit', {'id': report.id}) }}" class="btn btn-warning">Modifier</a>
+                <script>
+                    function updateWhatIfSimulation() {
+                        const currentScore = parseInt('{{ report.score|default(0) }}');
+                        let totalImpact = 0;
+                        
+                        document.querySelectorAll('.recommendation-checkbox:checked').forEach(cb => {
+                            totalImpact += parseInt(cb.dataset.impact);
+                        });
+                        
+                        const futureScore = Math.min(100, currentScore + totalImpact);
+                        const gain = futureScore - currentScore;
+                        
+                        // Update values
+                        const futureScoreEl = document.getElementById('future-score-val');
+                        futureScoreEl.innerText = futureScore + '%';
+                        
+                        // Animate if score changed
+                        futureScoreEl.classList.remove('animate__pulse');
+                        void futureScoreEl.offsetWidth; // trigger reflow
+                        futureScoreEl.classList.add('animate__pulse');
+                        
+                        // Update progress bars
+                        document.getElementById('sim-progress-current').style.width = currentScore + '%';
+                        document.getElementById('sim-progress-gain').style.width = gain + '%';
+                        
+                        if (gain > 0) {
+                            futureScoreEl.className = 'h3 mb-0 font-weight-bold text-success animate__animated';
+                        } else {
+                            futureScoreEl.className = 'h3 mb-0 font-weight-bold text-gray-800 animate__animated';
+                        }
+                    }
+                </script>
+
+                <a href="{{ path('app_user_report_index') }}" class="btn btn-secondary">{{ 'report.return_list'|trans }}</a>
+                <a href="{{ path('app_user_report_edit', {'id': report.id}) }}" class="btn btn-warning">{{ 'report.modify'|trans }}</a>
+                <a href="{{ path('app_user_report_pdf', {'id': report.id}) }}" class="btn btn-danger">
+                    <i class="fas fa-file-pdf"></i> {{ 'report.download_pdf'|trans }}
+                </a>
             </div>
         </div>
     </div>
