@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique - {{ report.title }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-history text-info mr-2"></i>
+            Historique : {{ report.title }}
+        </h1>
+        <a href="{{ path('app_report_show', {id: report.id}) }}" class="btn btn-secondary btn-sm shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Retour au rapport
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-code-branch mr-1"></i> Toutes les versions
+            </h6>
+            <span class="badge badge-primary ml-2">{{ logs|length }} version(s)</span>
+        </div>
+        <div class="card-body">
+            {% if logs|length == 0 %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-history fa-3x mb-3 text-light"></i>
+                    <p>Aucun historique disponible pour ce rapport. Les modifications futures seront enregistrées ici.</p>
+                </div>
+            {% else %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="80">Version</th>
+                            <th width="170">Date</th>
+                            <th width="150">Auteur</th>
+                            <th width="120">Action</th>
+                            <th>Modifications détectées</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td class="text-center">
+                                <span class="badge badge-primary">v{{ log.version }}</span>
+                            </td>
+                            <td>{{ log.loggedAt|date('d/m/Y H:i:s') }}</td>
+                            <td>
+                                <i class="fas fa-user-circle text-muted mr-1"></i>
+                                {{ log.username|default('Système') }}
+                            </td>
+                            <td>
+                                {% if log.action == 'create' %}
+                                    <span class="badge badge-success"><i class="fas fa-plus mr-1"></i>Création</span>
+                                {% elseif log.action == 'update' %}
+                                    <span class="badge badge-warning"><i class="fas fa-edit mr-1"></i>Mise à jour</span>
+                                {% elseif log.action == 'delete' %}
+                                    <span class="badge badge-danger"><i class="fas fa-trash mr-1"></i>Suppression</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">{{ log.action }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if log.data %}
+                                    <ul class="mb-0 pl-3 small">
+                                    {% for field, value in log.data %}
+                                        <li>
+                                            <strong>{{ field }}:</strong>
+                                            {% if value is iterable and value.old is defined %}
+                                                <span class="text-danger text-decoration-line-through">{{ value.old|default('—') }}</span>
+                                                <i class="fas fa-arrow-right text-muted mx-1"></i>
+                                                <span class="text-success">{{ value.new|default('—') }}</span>
+                                            {% else %}
+                                                <span class="text-secondary">{{ value }}</span>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <span class="text-muted small">Aucun détail</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

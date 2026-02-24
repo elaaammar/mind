@@ -35,7 +35,7 @@ class Recommendation
         return $this->content;
     }
 
-    public function setContent(string $content): static
+    public function setContent(?string $content): static
     {
         $this->content = $content;
 
@@ -81,9 +81,41 @@ class Recommendation
         return $this;
     }
 
+    #[ORM\Column(options: ["default" => false])]
+    private bool $isApplied = false;
+
+    public function isApplied(): bool
+    {
+        return $this->isApplied;
+    }
+
+    public function setIsApplied(bool $isApplied): static
+    {
+        $this->isApplied = $isApplied;
+        return $this;
+    }
+
+    #[ORM\Column(nullable: true)]
+    private ?int $potentialImpact = null;
+
+    public function getPotentialImpact(): ?int
+    {
+        return $this->potentialImpact;
+    }
+
+    public function setPotentialImpact(?int $potentialImpact): static
+    {
+        $this->potentialImpact = $potentialImpact;
+
+        return $this;
+    }
+
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
         $this->createdAt = new \DateTimeImmutable();
+        if ($this->potentialImpact === null) {
+            $this->potentialImpact = rand(5, 15); // Default simulated impact
+        }
     }
 }

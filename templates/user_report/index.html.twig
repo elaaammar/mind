@@ -1,19 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Rapports{% endblock %}
+{% block title %}{{ 'reports.my'|trans }}{% endblock %}
 
 {% block body %}
     <div class="container-fluid">
-        <h1 class="h3 mb-4 text-gray-800">Mes Rapports</h1>
+        <h1 class="h3 mb-4 text-gray-800">{{ 'reports.my'|trans }}</h1>
 
         <div class="card shadow-primary mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Liste de mes rapports</h6>
+                <h6 class="m-0 font-weight-bold text-primary">{{ 'reports.list_my'|trans }}</h6>
                 <a href="{{ path('app_user_report_new') }}" class="btn btn-success btn-sm btn-icon-split">
                     <span class="icon text-white-50">
                         <i class="fas fa-plus"></i>
                     </span>
-                    <span class="text">Créer un nouveau</span>
+                    <span class="text">{{ 'btn.create'|trans }}</span>
                 </a>
             </div>
             <div class="card-body">
@@ -22,14 +22,14 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Titre</th>
-                                <th>Statut</th>
-                                <th>Priorité</th>
-                                <th>Score</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Date Validation</th>
-                                <th>Actions</th>
+                                <th>{{ 'report.title'|trans }}</th>
+                                <th>{{ 'report.status'|trans }}</th>
+                                <th>{{ 'report.priority'|trans }}</th>
+                                <th>{{ 'report.score'|trans }}</th>
+                                <th>{{ 'report.type'|trans }}</th>
+                                <th>{{ 'report.description'|trans }}</th>
+                                <th>{{ 'report.date_validation'|trans }}</th>
+                                <th>{{ 'report.actions'|trans }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -87,7 +87,7 @@
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="9">Aucun rapport trouvé.</td>
+                                <td colspan="9">{{ 'reports.none_found'|trans }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>

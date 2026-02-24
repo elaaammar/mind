@@ -1,0 +1,45 @@
+<a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fas fa-bell fa-fw"></i>
+    {% if totalUnread > 0 %}
+        <span class="badge badge-danger badge-counter">{{ totalUnread > 9 ? '9+' : totalUnread }}</span>
+    {% endif %}
+</a>
+<!-- Dropdown - Alerts -->
+<div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+    aria-labelledby="alertsDropdown">
+    <h6 class="dropdown-header">
+        {{ 'alerts.center'|trans }}
+    </h6>
+    {% for alert in alerts %}
+        <a class="dropdown-item d-flex align-items-center" href="{{ alert.report ? path('app_report_show', {id: alert.report.id}) : '#' }}" onclick="markAlertAsRead({{ alert.id }})">
+            <div class="mr-3">
+                <div class="icon-circle bg-{{ alert.type }}">
+                    {% if alert.type == 'success' %}
+                        <i class="fas fa-trophy text-white"></i>
+                    {% else %}
+                        <i class="fas fa-exclamation-triangle text-white"></i>
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <div class="small text-gray-500">{{ alert.createdAt|date('d M Y, H:i') }}</div>
+                <span class="font-weight-bold">{{ alert.title|trans }}</span>
+                <div class="small text-truncate" style="max-width: 200px;">{{ alert.message }}</div>
+            </div>
+        </a>
+    {% else %}
+        <a class="dropdown-item text-center small text-gray-500" href="#">{{ 'alerts.none'|trans }}</a>
+    {% endfor %}
+    <a class="dropdown-item text-center small text-gray-500" href="#">{{ 'alerts.view_all'|trans }}</a>
+</div>
+
+<script>
+function markAlertAsRead(id) {
+    fetch('/alerts/read/' + id)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Alert ' + id + ' marked as read');
+        });
+}
+</script>

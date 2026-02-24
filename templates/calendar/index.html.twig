@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'calendar.title'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css">
+    <style>
+        #calendar-holder {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        .fc-event {
+            cursor: pointer;
+        }
+        .fc-toolbar-title {
+            font-weight: 700;
+            color: #4e73df;
+        }
+        .fc-button-primary {
+            background-color: #4e73df !important;
+            border-color: #4e73df !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ 'calendar.title'|trans }}</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12 col-lg-12">
+                <div id="calendar-holder"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar-holder');
+
+            {% set is_user_context = (current_route ?? '') starts with 'app_user_' ? 'true' : 'false' %}
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: '{{ app.request.locale }}',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: {
+                    url: '{{ path('fc_load_events') }}',
+                    method: 'POST',
+                    extraParams: {
+                        filters: JSON.stringify({
+                            'is_user': {{ is_user_context }}
+                        })
+                    },
+                    failure: function () {
+                        // console.error('Error fetching calendar events');
+                    },
+                },
+                timeZone: 'UTC',
+            });
+            calendar.render();
+        });
+    </script>
+{% endblock %}

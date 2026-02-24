@@ -6,6 +6,7 @@ use App\Entity\Report;
 use App\Form\ReportType;
 use App\Repository\ReportRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +15,19 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/user/rapport')]
 final class UserReportController extends AbstractController
 {
+    #[Route('/{id}/pdf', name: 'app_user_report_pdf', methods: ['GET'])]
+    public function downloadPdf(Report $report, DompdfWrapperInterface $wrapper): Response
+    {
+        if ($report->getSource() !== 'user') {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à ce rapport.');
+        }
+
+        $html = $this->renderView('report/pdf.html.twig', [
+            'report' => $report
+        ]);
+
+        return $wrapper->getStreamResponse($html, "rapport_audit_user_" . $report->getId() . ".pdf");
+    }
     #[Route(name: 'app_user_report_index', methods: ['GET'])]
     public function index(Request $request, ReportRepository $reportRepository): Response
     {

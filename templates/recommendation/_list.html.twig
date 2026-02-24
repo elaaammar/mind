@@ -1,0 +1,59 @@
+{% if recommendations|length > 0 %}
+    <div class="timeline ml-3">
+        {% for rec in recommendations %}
+        <div class="timeline-item ajax-delete-item" id="rec-item-{{ rec.id }}">
+            <div class="timeline-dot {{ rec.isApplied ? 'applied' : '' }}"></div>
+            <div class="card border-0 shadow-sm {% if rec.isApplied %}border-left-success{% else %}border-left-primary{% endif %} mb-3" style="border-radius: 12px; transition: all 0.3s ease;">
+                <div class="card-body py-3 px-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1 text-center">
+                            <div class="d-flex align-items-center justify-content-center mb-2 flex-wrap gap-2">
+                                <a href="{{ path('app_report_show', {'id': rec.report.id}) }}" class="h5 mb-0 font-weight-bold text-primary mr-2">
+                                    {{ rec.report.title }}
+                                </a>
+                                <span class="badge badge-pill badge-light border text-dark px-2">Score: {{ rec.report.score }}/100</span>
+                                <span class="badge badge-pill badge-{{ rec.report.priority == 'Forte' ? 'danger' : (rec.report.priority == 'Moyenne' ? 'warning' : 'secondary') }} px-2">{{ rec.report.priority }}</span>
+                                {% if rec.potentialImpact %}
+                                    <span class="badge badge-pill badge-success-soft text-success px-2" style="background:rgba(28, 200, 138, 0.1);">+{{ rec.potentialImpact }} pts</span>
+                                {% endif %}
+                            </div>
+                            <p class="mb-3 text-dark font-weight-medium mx-auto" style="font-size:1.1rem; line-height: 1.6; max-width: 800px;">
+                                {{ rec.content|raw|nl2br }}
+                            </p>
+                            <div class="d-flex align-items-center justify-content-center text-muted small">
+                                <i class="fas fa-calendar-alt mr-1"></i>{{ rec.createdAt|date('d/m/Y') }}
+                                <i class="fas fa-clock ml-3 mr-1"></i>{{ rec.createdAt|date('H:i') }}
+                            </div>
+                        </div>
+                        <div class="ml-3 d-flex flex-column align-items-end">
+                            {# Applied toggle #}
+                            <button class="btn btn-sm mb-2 applied-btn rounded-pill px-3 {{ rec.isApplied ? 'btn-success' : 'btn-outline-primary' }}"
+                                    data-id="{{ rec.id }}"
+                                    data-url="{{ path('app_recommendation_toggle_applied', {id: rec.id}) }}"
+                                    title="{{ rec.isApplied ? 'Marquer comme non appliqué' : 'Marquer comme appliqué' }}">
+                                <i class="fas fa-{{ rec.isApplied ? 'check-circle' : 'circle' }}"></i>
+                                <span class="ml-1">{{ rec.isApplied ? 'Appliqué' : 'À faire' }}</span>
+                            </button>
+                            <div class="d-flex gap-2">
+                                <a href="{{ path('app_recommendation_show', {'id': rec.id}) }}" class="btn btn-sm btn-icon-only btn-light rounded-circle shadow-sm" title="Détails" style="width:32px; height:32px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-eye fa-sm text-info"></i></a>
+                                <a href="{{ path('app_recommendation_edit', {'id': rec.id}) }}" class="btn btn-sm btn-icon-only btn-light rounded-circle shadow-sm" title="Modifier" style="width:32px; height:32px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-edit fa-sm text-primary"></i></a>
+                                <form method="post" action="{{ path('app_recommendation_delete', {'id': rec.id}) }}" class="ajax-delete-form" data-confirm="Supprimer cette recommandation ?">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rec.id) }}">
+                                    <button class="btn btn-sm btn-icon-only btn-light rounded-circle shadow-sm" title="Supprimer" style="width:32px; height:32px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-trash-alt fa-sm text-danger"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <div class="bg-light d-inline-flex p-4 rounded-circle mb-3">
+            <i class="fas fa-robot fa-3x text-gray-400"></i>
+        </div>
+        <p class="text-muted h5">{{ 'recommendations.none_found'|trans }}</p>
+    </div>
+{% endif %}

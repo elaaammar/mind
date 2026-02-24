@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app.request.locale }}" {% if app.request.locale == 'ar' %}dir="rtl"{% endif %}>
 
 <head>
 
@@ -29,7 +29,6 @@
             .sidebar {
                 position: fixed !important;
                 top: 0;
-                left: 0;
                 bottom: 0;
                 width: 14rem !important;
                 z-index: 1031 !important;
@@ -37,22 +36,57 @@
                 overflow-x: hidden !important;
             }
 
-            #content-wrapper {
+            /* LTR Layout */
+            html:not([dir="rtl"]) .sidebar {
+                left: 0;
+            }
+            html:not([dir="rtl"]) #content-wrapper {
                 margin-left: 14rem !important;
                 width: calc(100% - 14rem) !important;
+            }
+
+            /* RTL Layout (Arabic) */
+            html[dir="rtl"] .sidebar {
+                right: 0;
+            }
+            html[dir="rtl"] #content-wrapper {
+                margin-right: 14rem !important;
+                width: calc(100% - 14rem) !important;
+            }
+
+            #content-wrapper {
                 min-height: 100vh !important;
                 display: flex !important;
                 flex-direction: column !important;
             }
 
-            /* Toggled state */
-            .sidebar.toggled {
+            /* Toggled state LTR */
+            html:not([dir="rtl"]) .sidebar.toggled {
                 width: 6.5rem !important;
             }
-            .sidebar.toggled + #content-wrapper {
+            html:not([dir="rtl"]) .sidebar.toggled + #content-wrapper {
                 margin-left: 6.5rem !important;
                 width: calc(100% - 6.5rem) !important;
             }
+
+            /* Toggled state RTL */
+            html[dir="rtl"] .sidebar.toggled {
+                width: 6.5rem !important;
+            }
+            html[dir="rtl"] .sidebar.toggled + #content-wrapper {
+                margin-right: 6.5rem !important;
+                width: calc(100% - 6.5rem) !important;
+            }
+        }
+
+        /* Dropdown fix for z-index issues */
+        .topbar .nav-item.dropdown .dropdown-menu {
+            z-index: 2000 !important;
+        }
+        
+        /* Ensure the topbar stays above everything */
+        .topbar {
+            z-index: 1030 !important;
         }
 
         /* Toast Notification Styles */
@@ -80,7 +114,7 @@
 </head>
 
 <body id="page-top">
-    {% set current_route = app.request.attributes.get('_route') %}
+    {% set current_route = app.request.attributes.get('_route') ?? '' %}
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -89,7 +123,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            {% if app.request.attributes.get('_route') starts with 'app_user_' %}
+            {% if current_route starts with 'app_user_' %}
                 <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('app_user_dashboard') }}">
                     <div class="sidebar-brand-text mx-3">Espace Utilisateur</div>
                 </a>
@@ -102,31 +136,41 @@
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            {% if app.request.attributes.get('_route') starts with 'app_user_' %}
+            {% if current_route starts with 'app_user_' %}
                 <!-- USER SECTION -->
                 <li class="nav-item {{ current_route == 'app_user_dashboard' ? 'active' : '' }}">
                     <a class="nav-link" href="{{ path('app_user_dashboard') }}">
-                        <span>Mon Tableau de bord</span></a>
+                        <span>{{ 'dashboard.user'|trans }}</span></a>
                 </li>
                 <li class="nav-item {{ current_route starts with 'app_user_report' ? 'active' : '' }}">
                     <a class="nav-link" href="{{ path('app_user_report_index') }}">
-                        <span>Mes Rapports</span></a>
+                        <span>{{ 'reports.my'|trans }}</span></a>
+                </li>
+                <li class="nav-item {{ current_route == 'app_user_calendar' ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ path('app_user_calendar') }}">
+                        <i class="fas fa-fw fa-calendar"></i>
+                        <span>{{ 'calendar.title'|trans }}</span></a>
                 </li>
             {% else %}
                 <!-- ADMIN SECTION -->
                 <li class="nav-item {{ current_route == 'app_dashboard' ? 'active' : '' }}">
                     <a class="nav-link" href="{{ path('app_dashboard') }}">
-                        <span>Tableau de bord Admin</span></a>
+                        <span>{{ 'dashboard.title'|trans }} Admin</span></a>
                 </li>
                 <li class="nav-item {{ current_route == 'app_report_index' ? 'active' : '' }}">
                     <a class="nav-link" href="{{ path('app_report_index') }}">
-                        <span>Gestion des Rapports</span>
+                        <span>{{ 'reports.manage'|trans }}</span>
                     </a>
                 </li>
                 <li class="nav-item {{ current_route == 'app_recommendation' ? 'active' : '' }}">
                     <a class="nav-link" href="{{ path('app_recommendation') }}">
-                        <span>Optimisations IA</span>
+                        <span>{{ 'ai.insights'|trans }}</span>
                     </a>
+                </li>
+                <li class="nav-item {{ current_route == 'app_calendar' ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ path('app_calendar') }}">
+                        <i class="fas fa-fw fa-calendar"></i>
+                        <span>{{ 'calendar.title'|trans }}</span></a>
                 </li>
             {% endif %}
 
@@ -137,7 +181,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_home') }}">
                     <i class="fas fa-fw fa-home"></i>
-                    <span>Retour à l'Accueil</span>
+                    <span>{{ 'home.back'|trans }}</span>
                 </a>
             </li>
 
@@ -159,7 +203,7 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-1 static-top shadow">
 
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -173,9 +217,9 @@
                         path('app_report_index') 
                     %}
                     {% set search_placeholder = 
-                        (current_route starts with 'app_user_report') ? 'Rechercher mes rapports...' :
-                        (current_route == 'app_recommendation') ? 'Rechercher des recommandations...' : 
-                        (current_route == 'app_dashboard' ? 'Rechercher dans les stats...' : 'Rechercher des rapports...') 
+                        (current_route starts with 'app_user_report') ? 'search.my_reports'|trans :
+                        (current_route == 'app_recommendation') ? 'search.recommendations'|trans : 
+                        (current_route == 'app_dashboard' ? 'search.stats'|trans : 'search.reports'|trans) 
                     %}
                     
                     <form action="{{ search_action }}" method="get"
@@ -194,23 +238,50 @@
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter"></span>
-                            </a>
+                        <li class="nav-item dropdown no-arrow mx-1" id="alerts-navigation-container">
+                            {{ render(controller('App\\Controller\\AlertController::dropdown')) }}
                         </li>
 
-                        <!-- Nav Item - Messages -->
+
+                        <!-- Nav Item - Language Selector -->
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
+                                <i class="fas fa-globe fa-fw"></i>
+                                <span class="ml-1 small fw-bold text-uppercase">{{ app.request.locale }}</span>
                             </a>
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="languageDropdown">
+                                <h6 class="dropdown-header">Choisir la langue</h6>
+                                <a class="dropdown-item d-flex align-items-center {{ app.request.locale == 'fr' ? 'active' : '' }}" href="{{ path('change_locale', {'locale': 'fr'}) }}">
+                                    <span class="mr-3">🇫🇷</span>
+                                    <span>Français</span>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center {{ app.request.locale == 'en' ? 'active' : '' }}" href="{{ path('change_locale', {'locale': 'en'}) }}">
+                                    <span class="mr-3">🇺🇸</span>
+                                    <span>English</span>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center {{ app.request.locale == 'ar' ? 'active' : '' }}" href="{{ path('change_locale', {'locale': 'ar'}) }}">
+                                    <span class="mr-3">🇸🇦</span>
+                                    <span>العربية</span>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center {{ app.request.locale == 'es' ? 'active' : '' }}" href="{{ path('change_locale', {'locale': 'es'}) }}">
+                                    <span class="mr-3">🇪🇸</span>
+                                    <span>Español</span>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center {{ app.request.locale == 'de' ? 'active' : '' }}" href="{{ path('change_locale', {'locale': 'de'}) }}">
+                                    <span class="mr-3">🇩🇪</span>
+                                    <span>Deutsch</span>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center {{ app.request.locale == 'it' ? 'active' : '' }}" href="{{ path('change_locale', {'locale': 'it'}) }}">
+                                    <span class="mr-3">🇮🇹</span>
+                                    <span>Italiano</span>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center {{ app.request.locale == 'pt' ? 'active' : '' }}" href="{{ path('change_locale', {'locale': 'pt'}) }}">
+                                    <span class="mr-3">🇵🇹</span>
+                                    <span>Português</span>
+                                </a>
+                            </div>
                         </li>
 
                         <div class="topbar-divider d-none d-sm-block"></div>
