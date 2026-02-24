@@ -1,0 +1,51 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ title }}</h1>
+        {% if question.audit %}
+        <a href="{{ path('app_front_audit_edit', {'id': question.audit.id}) }}" class="btn btn-secondary btn-sm shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back to Audit
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Question Details</h6>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.content) }}
+                            {{ form_widget(form.content) }}
+                            {{ form_errors(form.content) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.type) }}
+                            {{ form_widget(form.type) }}
+                            {{ form_errors(form.type) }}
+                        </div>
+                        <!-- Audit field is hidden or pre-filled usually, hiding it here for UX if not needed -->
+                        <div class="d-none">
+                            {{ form_row(form.audit) }}
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button class="btn btn-primary btn-icon-split">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-save"></i>
+                                </span>
+                                <span class="text">Save Question</span>
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
