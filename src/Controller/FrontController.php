@@ -14,9 +14,4 @@ class FrontController extends AbstractController
         return $this->render('front/index.html.twig');
     }
 
-    #[Route('/', name: 'app_home')]
-    public function home(): Response
-    {
-        return $this->redirectToRoute('app_front_index');
-    }   
 }

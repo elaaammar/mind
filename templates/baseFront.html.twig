@@ -69,6 +69,13 @@
             </div>
 
             <div class="navbar-btn d-none d-lg-inline-block">
+              {% if app.user %}
+                <a class="btn primary-btn-outline" href="{{ path('app_dashboard') }}">Dashboard</a>
+                <a class="btn primary-btn" href="{{ path('app_logout') }}">Déconnexion</a>
+              {% else %}
+                <a class="btn primary-btn-outline" href="{{ path('app_login') }}">Connexion</a>
+                <a class="btn primary-btn" href="{{ path('app_register') }}">S'inscrire</a>
+              {% endif %}
               <a class="menu-bar fs-4" href="#side-menu-left"><i class="lni lni-menu"></i></a>
             </div>
           </nav>

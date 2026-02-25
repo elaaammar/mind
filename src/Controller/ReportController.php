@@ -26,19 +26,24 @@ final class ReportController extends AbstractController
     }
 
     #[Route(name: 'app_report_index', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function index(Request $request, ReportRepository $reportRepository): Response
     {
-        $query = $request->query->get('q');
+        try {
+            $query = $request->query->get('q');
 
-        if ($query) {
-            $reports = $reportRepository->findBySearch($query);
-        } else {
-            $reports = $reportRepository->findAll();
+            if ($query) {
+                $reports = $reportRepository->findBySearch($query);
+            } else {
+                $reports = $reportRepository->findAll();
+            }
+
+            return $this->render('report/index.html.twig', [
+                'reports' => $reports,
+            ]);
+        } catch (\Exception $e) {
+            return new Response("Debug Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
         }
-
-        return $this->render('report/index.html.twig', [
-            'reports' => $reports,
-        ]);
     }
 
     #[Route('/new', name: 'app_report_new', methods: ['GET', 'POST'])]

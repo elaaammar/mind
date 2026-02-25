@@ -22,10 +22,9 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(Request $request, ReportRepository $reportRepository, RecommendationRepository $recommendationRepository, EntityManagerInterface $entityManager, LoginRedirectService $loginRedirectService): Response
     {
-        // Si l'utilisateur est déjà connecté et qu'on veut le rediriger (optionnel)
-        // if ($this->getUser() instanceof Utilisateur) {
-        //     return $this->redirect($loginRedirectService->getRedirectUrl($this->getUser()));
-        // }
+        if ($this->getUser() instanceof Utilisateur) {
+            return $this->redirect($loginRedirectService->getRedirectUrl($this->getUser()));
+        }
 
         $report = new Report();
         $report->setStatus('En cours');

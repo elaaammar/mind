@@ -12,43 +12,47 @@ use Symfony\Component\Routing\Attribute\Route;
 final class DashboardController extends AbstractController
 {
     #[Route('/dashboard', name: 'app_dashboard')]
+    #[IsGranted('ROLE_USER')]
     public function index(
         Request $request,
         ReportRepository $reportRepository,
         RecommendationRepository $recommendationRepository
     ): Response {
-        $data = $this->aggregateDashboardData($request, $reportRepository, $recommendationRepository);
-        
-        // Fetch unique types, statuses, and priorities for the filter dropdowns
-        $types = $reportRepository->createQueryBuilder('r')
-            ->select('DISTINCT r.type')
-            ->where('r.type IS NOT NULL')
-            ->getQuery()->getResult();
-        
-        $statuses = $reportRepository->createQueryBuilder('r')
-            ->select('DISTINCT r.status')
-            ->where('r.status IS NOT NULL')
-            ->getQuery()->getResult();
+        try {
+            $data = $this->aggregateDashboardData($request, $reportRepository, $recommendationRepository);
             
+            // Fetch unique types, statuses, and priorities for the filter dropdowns
+            $types = $reportRepository->createQueryBuilder('r')
+                ->select('DISTINCT r.type')
+                ->where('r.type IS NOT NULL')
+                ->getQuery()->getResult();
             
-        $priorities = $reportRepository->createQueryBuilder('r')
-            ->select('DISTINCT r.priority')
-            ->where('r.priority IS NOT NULL')
-            ->getQuery()->getResult();
-            
-        // Filter out User reports
-        $allReportsList = $reportRepository->createQueryBuilder('r')
-            ->where('r.source != :sourceUser OR r.source IS NULL')
-            ->setParameter('sourceUser', 'user')
-            ->orderBy('r.title', 'ASC')
-            ->getQuery()->getResult();
+            $statuses = $reportRepository->createQueryBuilder('r')
+                ->select('DISTINCT r.status')
+                ->where('r.status IS NOT NULL')
+                ->getQuery()->getResult();
+                
+            $priorities = $reportRepository->createQueryBuilder('r')
+                ->select('DISTINCT r.priority')
+                ->where('r.priority IS NOT NULL')
+                ->getQuery()->getResult();
+                
+            // Filter out User reports
+            $allReportsList = $reportRepository->createQueryBuilder('r')
+                ->where('r.source != :sourceUser OR r.source IS NULL')
+                ->setParameter('sourceUser', 'user')
+                ->orderBy('r.title', 'ASC')
+                ->getQuery()->getResult();
 
-        return $this->render('dashboard/index.html.twig', array_merge($data, [
-            'availableTypes' => array_column($types, 'type'),
-            'availableStatuses' => array_column($statuses, 'status'),
-            'availablePriorities' => array_column($priorities, 'priority'),
-            'allReportsList' => $allReportsList,
-        ]));
+            return $this->render('dashboard/index.html.twig', array_merge($data, [
+                'availableTypes' => array_column($types, 'type'),
+                'availableStatuses' => array_column($statuses, 'status'),
+                'availablePriorities' => array_column($priorities, 'priority'),
+                'allReportsList' => $allReportsList,
+            ]));
+        } catch (\Exception $e) {
+            return new Response("Debug Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+        }
     }
 
     #[Route('/dashboard/stats', name: 'app_dashboard_stats', methods: ['GET'])]
