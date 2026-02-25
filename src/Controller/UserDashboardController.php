@@ -23,29 +23,23 @@ final class UserDashboardController extends AbstractController
         $types = $reportRepository->createQueryBuilder('r')
             ->select('DISTINCT r.type')
             ->where('r.type IS NOT NULL')
-            ->andWhere('r.source = :source')
-            ->setParameter('source', 'user')
             ->getQuery()->getResult();
         
         $statuses = $reportRepository->createQueryBuilder('r')
             ->select('DISTINCT r.status')
             ->where('r.status IS NOT NULL')
-            ->andWhere('r.source = :source')
-            ->setParameter('source', 'user')
             ->getQuery()->getResult();
             
         $priorities = $reportRepository->createQueryBuilder('r')
             ->select('DISTINCT r.priority')
             ->where('r.priority IS NOT NULL')
-            ->andWhere('r.source = :source')
-            ->setParameter('source', 'user')
             ->getQuery()->getResult();
             
         return $this->render('user_dashboard/index.html.twig', array_merge($data, [
             'availableTypes' => array_column($types, 'type'),
             'availableStatuses' => array_column($statuses, 'status'),
             'availablePriorities' => array_column($priorities, 'priority'),
-            'allReportsList' => $reportRepository->findBy(['source' => 'user'], ['title' => 'ASC']),
+            'allReportsList' => $reportRepository->findBy([], ['title' => 'ASC']),
         ]));
     }
 
@@ -70,9 +64,7 @@ final class UserDashboardController extends AbstractController
         $createFilteredQB = function($repository, $alias) use ($query, $type, $status, $priority) {
             $qb = $repository->createQueryBuilder($alias);
             
-            // Filter for USER reports only
-            $qb->andWhere($alias . '.source = :sourceUser')
-               ->setParameter('sourceUser', 'user');
+            // Show ALL reports (no source filter)
 
             if ($query) {
                 $qb->andWhere($alias . '.title LIKE :q OR ' . $alias . '.description LIKE :q')

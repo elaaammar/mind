@@ -35,8 +35,8 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('app_user_dashboard');
         }
 
-        $latestReports = $reportRepository->findBy(['status' => 'Validé'], ['id' => 'DESC'], 3);
-        $latestRecommendations = $recommendationRepository->findByReportStatus('Validé', 3);
+        $latestReports = $reportRepository->findBy([], ['id' => 'DESC'], 3);
+        $latestRecommendations = $recommendationRepository->findBy([], ['id' => 'DESC'], 3);
 
         return $this->render('home/index.html.twig', [
             'latest_reports' => $latestReports,

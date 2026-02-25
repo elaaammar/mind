@@ -12,34 +12,74 @@
         {{ 'alerts.center'|trans }}
     </h6>
     {% for alert in alerts %}
-        <a class="dropdown-item d-flex align-items-center" href="{{ alert.report ? path('app_report_show', {id: alert.report.id}) : '#' }}" onclick="markAlertAsRead({{ alert.id }})">
-            <div class="mr-3">
-                <div class="icon-circle bg-{{ alert.type }}">
-                    {% if alert.type == 'success' %}
-                        <i class="fas fa-trophy text-white"></i>
-                    {% else %}
-                        <i class="fas fa-exclamation-triangle text-white"></i>
-                    {% endif %}
+        <div class="dropdown-item d-flex align-items-center alert-item" id="alert-item-{{ alert.id }}" style="transition: all 0.4s ease;">
+            <a href="{{ alert.report ? path('app_report_show', {id: alert.report.id}) : '#' }}" class="d-flex align-items-center flex-grow-1 text-decoration-none text-dark">
+                <div class="mr-3">
+                    <div class="icon-circle bg-{{ alert.type }}">
+                        {% if alert.type == 'success' %}
+                            <i class="fas fa-trophy text-white"></i>
+                        {% else %}
+                            <i class="fas fa-exclamation-triangle text-white"></i>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-            <div>
-                <div class="small text-gray-500">{{ alert.createdAt|date('d M Y, H:i') }}</div>
-                <span class="font-weight-bold">{{ alert.title|trans }}</span>
-                <div class="small text-truncate" style="max-width: 200px;">{{ alert.message }}</div>
-            </div>
-        </a>
+                <div class="flex-grow-1">
+                    <div class="small text-gray-500">{{ alert.createdAt|date('d M Y, H:i') }}</div>
+                    <span class="font-weight-bold">{{ alert.title|trans }}</span>
+                    <div class="small text-truncate" style="max-width: 180px;">{{ alert.message }}</div>
+                </div>
+            </a>
+            <button
+                class="btn btn-sm btn-link text-success ml-2 mark-read-btn p-1"
+                title="Marquer comme lu"
+                onclick="event.stopPropagation(); markAlertAsRead({{ alert.id }}, this);"
+                style="font-size: 1rem; line-height:1;"
+            >
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </div>
     {% else %}
-        <a class="dropdown-item text-center small text-gray-500" href="#">{{ 'alerts.none'|trans }}</a>
+        <div class="dropdown-item text-center small text-gray-500 py-3">
+            <i class="fas fa-bell-slash mr-2"></i>{{ 'alerts.none'|trans }}
+        </div>
     {% endfor %}
-    <a class="dropdown-item text-center small text-gray-500" href="#">{{ 'alerts.view_all'|trans }}</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item text-center small text-primary fw-bold" href="#" onclick="markAllAlertsAsRead(event)">
+        <i class="fas fa-check-double mr-1"></i> Tout marquer comme lu
+    </a>
 </div>
 
 <script>
-function markAlertAsRead(id) {
+function markAlertAsRead(id, btn) {
     fetch('/alerts/read/' + id)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Alert ' + id + ' marked as read');
+        .then(r => r.json())
+        .then(() => {
+            const item = document.getElementById('alert-item-' + id);
+            if (item) {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(20px)';
+                setTimeout(() => item.remove(), 400);
+            }
+            // Update badge count
+            const badge = document.querySelector('.badge-counter');
+            if (badge) {
+                const current = parseInt(badge.textContent) || 1;
+                if (current <= 1) badge.remove();
+                else badge.textContent = current - 1;
+            }
         });
+}
+
+function markAllAlertsAsRead(e) {
+    e.preventDefault();
+    document.querySelectorAll('.alert-item').forEach(item => {
+        const id = item.id.replace('alert-item-', '');
+        fetch('/alerts/read/' + id);
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(20px)';
+        setTimeout(() => item.remove(), 400);
+    });
+    const badge = document.querySelector('.badge-counter');
+    if (badge) badge.remove();
 }
 </script>

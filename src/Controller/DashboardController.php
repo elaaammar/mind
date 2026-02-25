@@ -36,10 +36,8 @@ final class DashboardController extends AbstractController
             ->where('r.priority IS NOT NULL')
             ->getQuery()->getResult();
             
-        // Filter out User reports
+        // Show ALL reports regardless of source
         $allReportsList = $reportRepository->createQueryBuilder('r')
-            ->where('r.source != :sourceUser OR r.source IS NULL')
-            ->setParameter('sourceUser', 'user')
             ->orderBy('r.title', 'ASC')
             ->getQuery()->getResult();
 
@@ -80,9 +78,7 @@ final class DashboardController extends AbstractController
                 $qb->join($alias . '.report', 'r');
             }
 
-            // EXCLUDE USER REPORTS (Admin View)
-            $qb->andWhere($reportAlias . '.source != :sourceUser OR ' . $reportAlias . '.source IS NULL')
-               ->setParameter('sourceUser', 'user');
+            // Show ALL reports (no source filter)
 
             if ($query) {
                 $qb->andWhere($reportAlias . '.title LIKE :q OR ' . $reportAlias . '.description LIKE :q')

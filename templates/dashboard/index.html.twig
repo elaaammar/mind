@@ -124,6 +124,40 @@
             border-radius: 4px;
             background-color: #f1f5f9;
         }
+
+        /* Chart loading spinner */
+        .chart-spinner-wrap {
+            position: relative;
+        }
+        .chart-spinner {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.85);
+            border-radius: 1rem;
+            z-index: 10;
+            transition: opacity 0.4s ease;
+        }
+        .chart-spinner .spinner-border {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-width: 3px;
+            color: #6366f1;
+        }
+        .chart-spinner p {
+            margin-top: 0.75rem;
+            font-size: 0.78rem;
+            color: #94a3b8;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+        }
+        .chart-spinner.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
     </style>
 {% endblock %}
 
@@ -252,15 +286,19 @@
 
         <!-- Charts Row -->
         <div class="row g-4 mb-4">
-            <!-- Priority Bar Chart -->
+            <!-- Area Chart: Evolution Performance (now large/primary) -->
             <div class="col-xl-8">
                 <div class="card border-0 h-100">
                     <div class="card-header">
-                        <h6 class="mb-0 fw-bold text-uppercase small text-muted">Priorités des Recommandations</h6>
+                        <h6 class="mb-0 fw-bold text-uppercase small text-muted">Évolution des Scores (%)</h6>
                     </div>
                     <div class="card-body chart-container">
-                        <div style="height: 350px;">
-                            <canvas id="priorityBarChart"></canvas>
+                        <div class="chart-spinner-wrap" style="height: 350px;">
+                            <div class="chart-spinner" id="spinner-perf">
+                                <div class="spinner-border" role="status"><span class="sr-only">Chargement...</span></div>
+                                <p>Chargement du graphique…</p>
+                            </div>
+                            <canvas id="performanceScoreChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -273,7 +311,11 @@
                         <h6 class="mb-0 fw-bold text-uppercase small text-muted">Répartition des Statuts</h6>
                     </div>
                     <div class="card-body chart-container">
-                        <div style="height: 300px;">
+                        <div class="chart-spinner-wrap" style="height: 300px;">
+                            <div class="chart-spinner" id="spinner-status">
+                                <div class="spinner-border" role="status"><span class="sr-only">Chargement...</span></div>
+                                <p>Chargement du graphique…</p>
+                            </div>
                             <canvas id="statusPieChart"></canvas>
                         </div>
                     </div>
@@ -289,22 +331,30 @@
                         <h6 class="mb-0 fw-bold text-uppercase small text-muted">Répartition par Type</h6>
                     </div>
                     <div class="card-body chart-container">
-                        <div style="height: 300px;">
+                        <div class="chart-spinner-wrap" style="height: 300px;">
+                            <div class="chart-spinner" id="spinner-type">
+                                <div class="spinner-border" role="status"><span class="sr-only">Chargement...</span></div>
+                                <p>Chargement du graphique…</p>
+                            </div>
                             <canvas id="reportTypeChart"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Area Chart: Evolution Performance -->
+            <!-- Priority Bar Chart (now in the smaller slot) -->
             <div class="col-xl-6">
                 <div class="card border-0">
                     <div class="card-header">
-                        <h6 class="mb-0 fw-bold text-uppercase small text-muted">Évolution des Scores (%)</h6>
+                        <h6 class="mb-0 fw-bold text-uppercase small text-muted">Priorités des Recommandations</h6>
                     </div>
                     <div class="card-body chart-container">
-                        <div style="height: 300px;">
-                            <canvas id="performanceScoreChart"></canvas>
+                        <div class="chart-spinner-wrap" style="height: 300px;">
+                            <div class="chart-spinner" id="spinner-priority">
+                                <div class="spinner-border" role="status"><span class="sr-only">Chargement...</span></div>
+                                <p>Chargement du graphique…</p>
+                            </div>
+                            <canvas id="priorityBarChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -450,22 +500,33 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             initCharts(initialData);
+            // Hide all spinners after charts are initialized
+            document.querySelectorAll('.chart-spinner').forEach(s => s.classList.add('hidden'));
+
+            function showSpinners() {
+                document.querySelectorAll('.chart-spinner').forEach(s => s.classList.remove('hidden'));
+            }
+            function hideSpinners() {
+                document.querySelectorAll('.chart-spinner').forEach(s => s.classList.add('hidden'));
+            }
 
             document.querySelectorAll('.filter-input').forEach(input => {
                 input.addEventListener('change', () => {
+                    showSpinners();
                     const params = new URLSearchParams(new FormData(document.getElementById('filter-form')));
                     fetch('{{ path('app_dashboard_stats') }}?' + params.toString())
                         .then(r => r.json())
-                        .then(d => updateUI(d));
+                        .then(d => { updateUI(d); hideSpinners(); });
                 });
             });
 
             document.getElementById('reset-filters').addEventListener('click', () => {
                 setTimeout(() => {
+                    showSpinners();
                     const params = new URLSearchParams(new FormData(document.getElementById('filter-form')));
                     fetch('{{ path('app_dashboard_stats') }}?' + params.toString())
                         .then(r => r.json())
-                        .then(d => updateUI(d));
+                        .then(d => { updateUI(d); hideSpinners(); });
                 }, 10);
             });
         });

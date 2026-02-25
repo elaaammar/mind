@@ -143,6 +143,40 @@
         .progress-bar {
             border-radius: 4px;
         }
+
+        /* Chart loading spinner */
+        .chart-spinner-wrap {
+            position: relative;
+        }
+        .chart-spinner {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.85);
+            border-radius: 1rem;
+            z-index: 10;
+            transition: opacity 0.4s ease;
+        }
+        .chart-spinner .spinner-border {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-width: 3px;
+            color: #6366f1;
+        }
+        .chart-spinner p {
+            margin-top: 0.75rem;
+            font-size: 0.78rem;
+            color: #94a3b8;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+        }
+        .chart-spinner.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
     </style>
 {% endblock %}
 
@@ -284,7 +318,11 @@
                         </div>
                     </div>
                     <div class="card-body chart-container">
-                        <div style="height: 350px;">
+                        <div class="chart-spinner-wrap" style="height: 350px;">
+                            <div class="chart-spinner" id="spinner-perf">
+                                <div class="spinner-border" role="status"><span class="sr-only">Chargement...</span></div>
+                                <p>Chargement du graphique…</p>
+                            </div>
                             <canvas id="performanceScoreChart"></canvas>
                         </div>
                     </div>
@@ -298,7 +336,11 @@
                         <h6 class="mb-0 fw-bold text-uppercase small text-muted">{{ 'dashboard.process_states'|trans }}</h6>
                     </div>
                     <div class="card-body chart-container">
-                        <div style="height: 300px;">
+                        <div class="chart-spinner-wrap" style="height: 300px;">
+                            <div class="chart-spinner" id="spinner-status">
+                                <div class="spinner-border" role="status"><span class="sr-only">Chargement...</span></div>
+                                <p>Chargement du graphique…</p>
+                            </div>
                             <canvas id="statusPieChart"></canvas>
                         </div>
                     </div>
@@ -312,7 +354,11 @@
                         <h6 class="mb-0 fw-bold text-uppercase small text-muted">{{ 'dashboard.industry_analysis'|trans }}</h6>
                     </div>
                     <div class="card-body chart-container">
-                        <div style="height: 300px;">
+                        <div class="chart-spinner-wrap" style="height: 300px;">
+                            <div class="chart-spinner" id="spinner-type">
+                                <div class="spinner-border" role="status"><span class="sr-only">Chargement...</span></div>
+                                <p>Chargement du graphique…</p>
+                            </div>
                             <canvas id="reportTypeChart"></canvas>
                         </div>
                     </div>
@@ -457,15 +503,25 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             initCharts(initialData);
+            // Hide spinners once charts are ready
+            document.querySelectorAll('.chart-spinner').forEach(s => s.classList.add('hidden'));
+
+            function showSpinners() {
+                document.querySelectorAll('.chart-spinner').forEach(s => s.classList.remove('hidden'));
+            }
+            function hideSpinners() {
+                document.querySelectorAll('.chart-spinner').forEach(s => s.classList.add('hidden'));
+            }
 
             const filterInputs = document.querySelectorAll('.filter-input');
             const filterForm = document.getElementById('filter-form');
 
             const refreshStats = () => {
+                showSpinners();
                 const params = new URLSearchParams(new FormData(filterForm));
                 fetch('{{ path('app_user_dashboard_stats') }}?' + params.toString())
                     .then(response => response.json())
-                    .then(data => updateUI(data))
+                    .then(data => { updateUI(data); hideSpinners(); })
                     .catch(error => console.error('Error fetching stats:', error));
             };
 
