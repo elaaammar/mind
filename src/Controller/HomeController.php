@@ -55,35 +55,4 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard', name: 'app_dashboard')]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function dashboard(
-        UtilisateurRepository $utilisateurRepository,
-        RoleRepository $roleRepository,
-        LoginRedirectService $loginRedirectService
-    ): Response {
-        // Vérifier si l'utilisateur a le bon rôle pour accéder au dashboard
-        $user = $this->getUser();
-        if ($user instanceof Utilisateur) {
-            $roles = $user->getRoles();
-            
-            // Si l'utilisateur n'est ni admin ni auditeur, le rediriger vers son espace
-            if (!in_array('ROLE_ADMINISTRATEUR', $roles) && !in_array('ROLE_AUDITEUR', $roles)) {
-                $redirectUrl = $loginRedirectService->getRedirectUrl($user);
-                return $this->redirect($redirectUrl);
-            }
-        }
-
-        $totalUtilisateurs = count($utilisateurRepository->findAll());
-        $utilisateursActifs = $utilisateurRepository->countActifs();
-        $totalRoles = count($roleRepository->findAll());
-        $statsRoles = $roleRepository->countUtilisateursParRole();
-
-        return $this->render('home/dashboard.html.twig', [
-            'totalUtilisateurs' => $totalUtilisateurs,
-            'utilisateursActifs' => $utilisateursActifs,
-            'totalRoles' => $totalRoles,
-            'statsRoles' => $statsRoles,
-        ]);
-    }
 }

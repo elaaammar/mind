@@ -13,11 +13,7 @@ framework:
         cookie_samesite: lax
 
     #esi: true
-<<<<<<< HEAD
     fragments: true
-=======
-    #fragments: true
->>>>>>> origin/medlhr
     php_errors:
         log: true
 

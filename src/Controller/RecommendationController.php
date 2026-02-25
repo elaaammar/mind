@@ -37,7 +37,7 @@ class RecommendationController extends AbstractController
             $recommendations = $recommendationRepository->findBySearch($query);
         }
         if ($reportId) {
-            $recommendations = array_filter($recommendations, fn($r) => $r->getReport()->getId() == $reportId);
+            $recommendations = array_filter($recommendations, fn($r) => $r->getReport() && $r->getReport()->getId() == $reportId);
         }
         if ($filterStatus === 'applied') {
             $recommendations = array_filter($recommendations, fn($r) => $r->isApplied());
@@ -49,7 +49,7 @@ class RecommendationController extends AbstractController
         $total    = count($allRecs);
         $applied  = count(array_filter($allRecs, fn($r) => $r->isApplied()));
         $pending  = $total - $applied;
-        $thisMonth = count(array_filter($allRecs, fn($r) => $r->getCreatedAt()->format('Y-m') === date('Y-m')));
+        $thisMonth = count(array_filter($allRecs, fn($r) => $r->getCreatedAt() && $r->getCreatedAt()->format('Y-m') === date('Y-m')));
 
         // Score trend: group avg score by month (last 6 months)
         $reportRepo = $recommendationRepository->getEntityManager()->getRepository(\App\Entity\Report::class);
